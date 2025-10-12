@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes:
+    cupcake --default,
+    dim --prefersDark;
+
+  exclude: rootscrollgutter;
+}

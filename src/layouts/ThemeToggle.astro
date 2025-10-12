@@ -1,0 +1,35 @@
+<label
+  for="theme-toggle"
+  aria-label="toggle theme"
+  class="toggle text-base-content"
+>
+  <input id="theme-toggle" type="checkbox" class="theme-controller" />
+
+  <iconify-icon icon="lucide:sun" width="12"></iconify-icon>
+  <iconify-icon icon="lucide:moon-star" width="12"></iconify-icon>
+</label>
+
+<script>
+  const themeToggleElement = document.getElementById(
+    "theme-toggle"
+  ) as HTMLInputElement;
+
+  const THEME_LOCAL_STORAGE_KEY = "app-theme";
+  const DARK_THEME = "dim";
+  const LIGHT_THEME = "cupcake";
+
+  const toggleTheme = () => {
+    const isDark = themeToggleElement.checked;
+
+    const theme = isDark ? DARK_THEME : LIGHT_THEME;
+    localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
+    document.documentElement.dataset.theme = theme;
+  };
+
+  document.addEventListener("astro:page-load", toggleTheme);
+  themeToggleElement.addEventListener("input", toggleTheme);
+
+  themeToggleElement.checked =
+    localStorage.getItem(THEME_LOCAL_STORAGE_KEY) === DARK_THEME;
+  toggleTheme();
+</script>

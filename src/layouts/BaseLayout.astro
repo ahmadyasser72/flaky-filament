@@ -1,0 +1,66 @@
+---
+import "~/styles/global.css";
+import { menus } from "./menu";
+import SidebarMenuItem from "./SidebarMenuItem.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const title = "Hello world!";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="drawer lg:drawer-open bg-base-200">
+      <input id="sidebar" type="checkbox" class="drawer-toggle" />
+
+      <div
+        class="drawer-content rounded-box bg-base-100 m-2 flex flex-col shadow-sm"
+      >
+        <div class="navbar rounded-t-box w-full shadow-sm">
+          <div class="flex-none lg:hidden">
+            <label
+              for="sidebar"
+              aria-label="open sidebar"
+              class="btn btn-circle btn-ghost"
+            >
+              <iconify-icon icon="lucide:menu" width="24"></iconify-icon>
+            </label>
+          </div>
+
+          <div class="mx-2 flex-1">
+            <a href="/" class="btn btn-ghost text-xl">
+              {title}
+            </a>
+          </div>
+
+          <div class="mx-2 flex-none">
+            <ThemeToggle />
+          </div>
+        </div>
+
+        <div class="p-4">
+          <slot />
+        </div>
+      </div>
+
+      <div class="drawer-side">
+        <label for="sidebar" aria-label="close sidebar" class="drawer-overlay"
+        ></label>
+
+        <ul class="menu bg-base-200 text-base-content min-h-full w-64 p-4">
+          {menus.map((menu) => <SidebarMenuItem {...menu} />)}
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  import "iconify-icon"; // register <iconify-icon> web component
+</script>

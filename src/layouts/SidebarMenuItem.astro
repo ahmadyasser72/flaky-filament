@@ -1,0 +1,29 @@
+---
+import type { MenuItem } from "./menu";
+
+type Props = MenuItem;
+
+const { label, href, icon, submenus } = Astro.props;
+---
+
+{
+  submenus !== undefined && submenus.length > 0 ? (
+    <li>
+      <h2 class="menu-title">{label}</h2>
+      <ul>
+        {submenus.map((menu) => (
+          <Astro.self {...menu} />
+        ))}
+      </ul>
+    </li>
+  ) : (
+    <li>
+      <a href={href}>
+        {icon !== undefined && <iconify-icon {icon} width="20" />}
+        <span class="overflow-x-hidden text-nowrap overflow-ellipsis">
+          {label}
+        </span>
+      </a>
+    </li>
+  )
+}
