@@ -10,26 +10,27 @@
 </label>
 
 <script>
-  const themeToggleElement = document.getElementById(
-    "theme-toggle"
-  ) as HTMLInputElement;
-
   const THEME_LOCAL_STORAGE_KEY = "app-theme";
   const DARK_THEME = "dim";
   const LIGHT_THEME = "cupcake";
 
-  const toggleTheme = () => {
-    const isDark = themeToggleElement.checked;
-
+  const toggleTheme = (toggleElement: HTMLInputElement) => {
+    const isDark = toggleElement.checked;
     const theme = isDark ? DARK_THEME : LIGHT_THEME;
     localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
     document.documentElement.dataset.theme = theme;
   };
 
-  document.addEventListener("astro:page-load", toggleTheme);
-  themeToggleElement.addEventListener("input", toggleTheme);
+  document.addEventListener("astro:page-load", () => {
+    const themeToggleElement = document.getElementById(
+      "theme-toggle"
+    ) as HTMLInputElement;
+    themeToggleElement.checked =
+      localStorage.getItem(THEME_LOCAL_STORAGE_KEY) === DARK_THEME;
 
-  themeToggleElement.checked =
-    localStorage.getItem(THEME_LOCAL_STORAGE_KEY) === DARK_THEME;
-  toggleTheme();
+    toggleTheme(themeToggleElement);
+    themeToggleElement.addEventListener("input", () =>
+      toggleTheme(themeToggleElement)
+    );
+  });
 </script>
