@@ -1,0 +1,27 @@
+---
+import DataTable from "~/crud/components/DataTable.astro";
+import { handleActionResult } from "~/crud/action-handler";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+const redirect = handleActionResult(Astro, "/sekretariat/pegawai", "pegawai");
+if (redirect) return redirect;
+---
+
+<BaseLayout title="Kepegawaian">
+  <DataTable
+    base="/sekretariat/pegawai"
+    name="pegawai"
+    columns={{
+      nomorIndukPegawai: {},
+      namaLengkap: {},
+      tempatLahir: {},
+      tanggalLahir: { format: (value) => value.toISOString().split("T")[0] },
+      jenisKelamin: {
+        format: (value) => (value === "L" ? "Laki-laki" : "Perempuan"),
+      },
+      golonganDarah: {},
+    }}
+    getDetail={({ namaLengkap, nomorIndukPegawai }) =>
+      `${namaLengkap} (NIP: ${nomorIndukPegawai})`}
+  />
+</BaseLayout>

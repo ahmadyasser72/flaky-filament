@@ -1,0 +1,65 @@
+---
+import type { Pegawai } from "astro:db";
+
+import DataForm from "~/crud/components/DataForm.astro";
+import { handleActionResult } from "~/crud/action-handler";
+import FormField from "~/crud/components/FormField.astro";
+import FormFieldRadio from "~/crud/components/FormFieldRadio.astro";
+
+const redirect = handleActionResult(Astro, "/sekretariat/pegawai", "pegawai");
+if (redirect) return redirect;
+---
+
+<DataForm base="/sekretariat/pegawai" name="pegawai">
+  {
+    (pegawai: typeof Pegawai.$inferSelect) => (
+      <>
+        <FormField
+          name="nomorIndukPegawai"
+          label="Nomor Induk Pegawai (NIP)"
+          type="text"
+          value={pegawai?.nomorIndukPegawai}
+        />
+        <FormField
+          name="namaLengkap"
+          label="Nama Lengkap"
+          type="text"
+          value={pegawai?.namaLengkap}
+        />
+        <FormField
+          name="tempatLahir"
+          label="Tempat Lahir"
+          type="text"
+          value={pegawai?.tempatLahir}
+        />
+        <FormField
+          name="tanggalLahir"
+          label="Tanggal Lahir"
+          type="date"
+          value={pegawai?.tanggalLahir}
+        />
+
+        <FormFieldRadio
+          name="jenisKelamin"
+          label="Jenis Kelamin"
+          options={[
+            { label: "Laki-laki", value: "L" },
+            { label: "Perempuan", value: "P" },
+          ]}
+          selected={pegawai?.jenisKelamin}
+        />
+        <FormFieldRadio
+          name="golonganDarah"
+          label="Golongan Darah"
+          options={[
+            { label: "A", value: "A" },
+            { label: "B", value: "B" },
+            { label: "AB", value: "AB" },
+            { label: "O", value: "O" },
+          ]}
+          selected={pegawai?.golonganDarah}
+        />
+      </>
+    )
+  }
+</DataForm>

@@ -1,0 +1,104 @@
+---
+import { actions } from "astro:actions";
+
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+interface Props {
+  base: string;
+  name: keyof typeof actions;
+}
+
+const { base, name } = Astro.props;
+const action = actions[name];
+
+const id = Astro.url.searchParams.get("edit") ?? undefined;
+const data =
+  id !== undefined
+    ? await Astro.callAction(action.read.orThrow, { id })
+    : undefined;
+
+const isEdit = data !== undefined;
+const formAction = isEdit ? action.update : action.create;
+const formResult = Astro.getActionResult(formAction);
+
+const formFieldsHtml = await Astro.slots.render("default", [data]);
+---
+
+<BaseLayout title={isEdit ? `Edit ${name}` : `Buat ${name}`}>
+  <form
+    action={formAction}
+    id="data-form"
+    method="post"
+    data-error={JSON.stringify(formResult?.error)}
+    class="mx-auto grid max-w-lg"
+  >
+    {isEdit && <input type="hidden" name="id" value={id} />}
+
+    <fieldset
+      class="fieldset bg-base-200 border-base-300 rounded-box grid gap-x-8 gap-y-2 border p-4 sm:grid-cols-2"
+      transition:animate="fade"
+      transition:name="form-fieldset"
+    >
+      <legend class="fieldset-legend">Data {name}</legend>
+
+      <Fragment set:html={formFieldsHtml} />
+    </fieldset>
+
+    <div class="mt-4 flex gap-x-2 justify-self-end">
+      <button onclick="window.history.back()" class="btn btn-outline">
+        {isEdit ? "Batal" : "Kembali"}
+      </button>
+      <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</BaseLayout>
+
+<script>
+  import type { ZodIssue } from "astro:schema";
+
+  const checkFormError = () => {
+    const formElement = document.getElementById("data-form");
+    if (!(formElement instanceof HTMLElement)) return;
+
+    const { issues }: { issues?: ZodIssue[] } = JSON.parse(
+      formElement.dataset.error ?? "{}"
+    );
+
+    if (issues !== undefined) {
+      for (const { message, path } of issues) {
+        const [inputName] = path;
+        const inputElement = formElement.querySelector(`#${inputName}`);
+        const errorContainer = formElement.querySelector(`#${inputName}-error`);
+        if (
+          !(inputElement instanceof HTMLElement) ||
+          !(errorContainer instanceof HTMLElement)
+        ) {
+          console.error(`Elemen form ${inputName} tidak ditemukan.`);
+          continue;
+        }
+
+        errorContainer.innerText = message;
+        errorContainer.classList.toggle("opacity-0", false);
+        inputElement.classList.toggle("input-error", true);
+        inputElement.addEventListener(
+          "input",
+          () => inputElement.classList.toggle("input-error", false),
+          { once: true }
+        );
+        inputElement.addEventListener("blur", function clearError() {
+          if (inputElement.classList.contains("input-error")) return;
+
+          errorContainer.classList.toggle("opacity-0", true);
+          errorContainer.innerText = "-";
+          inputElement.removeEventListener("blur", clearError);
+        });
+
+        inputElement.focus();
+        break;
+      }
+    }
+  };
+
+  document.addEventListener("astro:after-swap", checkFormError);
+  checkFormError();
+</script>

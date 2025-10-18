@@ -1,9 +1,12 @@
 ---
+import { ClientRouter, fade } from "astro:transitions";
+
 import "~/styles/global.css";
+import FlashMessage from "~/components/FlashMessage.astro";
+
 import { menus } from "./menu";
 import SidebarMenuItem from "./SidebarMenuItem.astro";
 import ThemeToggle from "./ThemeToggle.astro";
-import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title: string;
@@ -52,9 +55,11 @@ const { title } = Astro.props;
           </div>
         </div>
 
-        <div class="p-4">
+        <div class="p-4" transition:animate={fade({ duration: 500 })}>
           <slot />
         </div>
+
+        <FlashMessage />
       </div>
 
       <div class="drawer-side is-drawer-close:overflow-visible">

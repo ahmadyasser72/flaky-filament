@@ -16,7 +16,7 @@ export const menus = [
         icon: "lucide:package",
       },
       {
-        href: "/sekretariat/kepegawaian",
+        href: "/sekretariat/pegawai",
         label: "Kepegawaian",
         icon: "lucide:users",
       },

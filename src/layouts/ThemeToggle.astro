@@ -14,23 +14,24 @@
   const DARK_THEME = "dim";
   const LIGHT_THEME = "cupcake";
 
-  const toggleTheme = (toggleElement: HTMLInputElement) => {
-    const isDark = toggleElement.checked;
-    const theme = isDark ? DARK_THEME : LIGHT_THEME;
-    localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
-    document.documentElement.dataset.theme = theme;
-  };
-
-  document.addEventListener("astro:page-load", () => {
-    const themeToggleElement = document.getElementById(
+  const initializeThemeToggle = () => {
+    const themeToggle = document.getElementById(
       "theme-toggle"
     ) as HTMLInputElement;
-    themeToggleElement.checked =
+    themeToggle.checked =
       localStorage.getItem(THEME_LOCAL_STORAGE_KEY) === DARK_THEME;
 
-    toggleTheme(themeToggleElement);
-    themeToggleElement.addEventListener("input", () =>
-      toggleTheme(themeToggleElement)
-    );
-  });
+    const toggleTheme = () => {
+      const isDark = themeToggle.checked;
+      const theme = isDark ? DARK_THEME : LIGHT_THEME;
+      localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
+      document.documentElement.dataset.theme = theme;
+    };
+
+    themeToggle.addEventListener("input", toggleTheme);
+    toggleTheme();
+  };
+
+  document.addEventListener("astro:after-swap", initializeThemeToggle);
+  initializeThemeToggle();
 </script>
