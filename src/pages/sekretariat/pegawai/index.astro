@@ -1,27 +1,31 @@
 ---
-import DataTable from "~/crud/components/DataTable.astro";
 import { handleActionResult } from "~/crud/action-handler";
+import DataTable from "~/crud/components/DataTable.astro";
+import { defineDataTable } from "~/crud/data-table";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import { formatDate } from "~/utils/date";
 
 const redirect = handleActionResult(Astro, "/sekretariat/pegawai", "pegawai");
 if (redirect) return redirect;
+
+const props = defineDataTable({
+  base: "/sekretariat/pegawai",
+  name: "pegawai",
+  columns: {
+    nomorIndukPegawai: {},
+    namaLengkap: {},
+    tempatLahir: {},
+    tanggalLahir: { format: formatDate },
+    jenisKelamin: {
+      format: (value) => (value === "L" ? "Laki-laki" : "Perempuan"),
+    },
+    golonganDarah: {},
+  },
+  getDetail: ({ namaLengkap, nomorIndukPegawai }) =>
+    `${namaLengkap} (NIP: ${nomorIndukPegawai})`,
+});
 ---
 
 <BaseLayout title="Kepegawaian">
-  <DataTable
-    base="/sekretariat/pegawai"
-    name="pegawai"
-    columns={{
-      nomorIndukPegawai: {},
-      namaLengkap: {},
-      tempatLahir: {},
-      tanggalLahir: { format: (value) => value.toISOString().split("T")[0] },
-      jenisKelamin: {
-        format: (value) => (value === "L" ? "Laki-laki" : "Perempuan"),
-      },
-      golonganDarah: {},
-    }}
-    getDetail={({ namaLengkap, nomorIndukPegawai }) =>
-      `${namaLengkap} (NIP: ${nomorIndukPegawai})`}
-  />
+  <DataTable {...props} />
 </BaseLayout>

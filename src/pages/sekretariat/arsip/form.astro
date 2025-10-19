@@ -1,0 +1,47 @@
+---
+import type { Arsip } from "astro:db";
+
+import DataForm from "~/crud/components/DataForm.astro";
+import { handleActionResult } from "~/crud/action-handler";
+import FormField from "~/crud/components/FormField.astro";
+import FormFieldFile from "~/crud/components/FormFieldFile.astro";
+
+const redirect = handleActionResult(Astro, "/sekretariat/arsip", "arsip");
+if (redirect) return redirect;
+---
+
+<DataForm base="/sekretariat/arsip" name="arsip">
+  {
+    (arsip: typeof Arsip.$inferSelect) => (
+      <>
+        <FormField
+          name="judul"
+          label="Judul"
+          type="text"
+          value={arsip?.judul}
+        />
+        <FormFieldFile
+          name="file"
+          label="File Arsip (PDF, max 10MB)"
+          value={arsip?.file}
+          class="row-span-2 max-sm:row-start-3"
+        />
+        <FormField
+          name="tanggal"
+          label="Tanggal"
+          type="date"
+          value={arsip?.tanggal ?? new Date()}
+        />
+      </>
+    )
+  }
+</DataForm>
+
+<script>
+  import { initializeFileSelector } from "~/crud/components/FormFieldFile.astro";
+
+  document.addEventListener("astro:after-swap", () =>
+    initializeFileSelector("file")
+  );
+  initializeFileSelector("file");
+</script>

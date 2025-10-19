@@ -11,9 +11,9 @@ export const menus = [
     label: "Sekretariat",
     submenus: [
       {
-        href: "/sekretariat/inventaris-kantor",
-        label: "Inventaris Kantor",
-        icon: "lucide:package",
+        href: "/sekretariat/arsip",
+        label: "Pengarsipan",
+        icon: "lucide:package-open",
       },
       {
         href: "/sekretariat/pegawai",

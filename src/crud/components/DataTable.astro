@@ -1,26 +1,10 @@
 ---
 import { actions } from "astro:actions";
-import type { Pegawai } from "astro:db";
-import { undefined } from "astro:schema";
 import { sentenceCase } from "text-case";
 
-interface ColumnDef<T, K extends keyof T> {
-  header?: (columnName: string) => string;
-  format?: (value: T[K]) => string;
-}
+import type { GenericDataTable } from "~/crud/data-table";
 
-type Columns<T> = {
-  [K in keyof Omit<T, "id" | "createdAt" | "updatedAt">]-?:
-    | ColumnDef<T, K>
-    | false;
-};
-
-interface Props<T = typeof Pegawai.$inferInsert> {
-  base: string;
-  name: keyof typeof actions;
-  getDetail: (data: T) => string;
-  columns: Columns<T>;
-}
+type Props = GenericDataTable<"pegawai">; // TODO: do actual generic when astro component support them
 
 const { base, name, getDetail, columns } = Astro.props;
 const action = actions[name];
@@ -38,7 +22,7 @@ const dataList = await Astro.callAction(action.list.orThrow, undefined);
     <table id="data-table" class="table-sm table" data-base={base}>
       <thead>
         <tr class="bg-base-300 sticky top-0 z-10">
-          <th class="sticky left-0 bg-inherit">No. </th>
+          <th class="sticky left-0 w-8 bg-inherit">No. </th>
 
           {
             Object.entries(columns).map(
@@ -68,7 +52,13 @@ const dataList = await Astro.callAction(action.list.orThrow, undefined);
                 if (!columnDef) return;
 
                 const value = data[columnName];
-                return <td>{columnDef.format?.(value as never) ?? value}</td>;
+                return (
+                  <td>
+                    <Fragment
+                      set:html={columnDef.format?.(value as never) ?? value}
+                    />
+                  </td>
+                );
               })}
 
               <td class="sticky right-0 bg-inherit max-lg:static">

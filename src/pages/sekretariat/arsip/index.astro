@@ -1,0 +1,33 @@
+---
+import { handleActionResult } from "~/crud/action-handler";
+import DataTable from "~/crud/components/DataTable.astro";
+import { defineDataTable } from "~/crud/data-table";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { formatDate } from "~/utils/date";
+
+const redirect = handleActionResult(Astro, "/sekretariat/arsip", "arsip");
+if (redirect) return redirect;
+
+const props = defineDataTable({
+  base: "/sekretariat/arsip",
+  name: "arsip",
+  columns: {
+    judul: {},
+    tanggal: { header: () => "Tanggal arsip", format: formatDate },
+    file: {
+      header: () => "Link download",
+      format: (fileUrl) =>
+        `<a class="link inline-flex items-center gap-x-1" target="_blank" href="${fileUrl}">
+        ${fileUrl}
+        <iconify-icon icon="lucide:external-link" width="16"></iconify-icon>
+      </a>`,
+    },
+  },
+  getDetail: ({ judul, tanggal }) =>
+    `${judul} (diarsipkan ${formatDate(tanggal)})`,
+});
+---
+
+<BaseLayout title="Pengarsipan">
+  <DataTable {...props} />
+</BaseLayout>

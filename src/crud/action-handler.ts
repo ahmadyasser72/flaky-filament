@@ -21,7 +21,7 @@ export const handleActionResult = (
   const updateResult = context.getActionResult(action.update);
   if (updateResult && !updateResult.error) {
     setFlash(context, {
-      message: `Berhasil menambah ${name} (ID: ${updateResult.data.id})`,
+      message: `Berhasil merubah ${name} (ID: ${updateResult.data.id})`,
       type: "success",
     });
     return context.redirect(base);

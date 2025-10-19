@@ -8,7 +8,7 @@ interface Props {
   name: keyof typeof actions;
 }
 
-const { base, name } = Astro.props;
+const { name } = Astro.props;
 const action = actions[name];
 
 const id = Astro.url.searchParams.get("edit") ?? undefined;

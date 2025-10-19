@@ -13,3 +13,13 @@ export const Pegawai = defineTable({
     ...timestamps,
   },
 });
+
+export const Arsip = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    judul: column.text(),
+    tanggal: column.date(),
+    file: column.text(),
+    ...timestamps,
+  },
+});
