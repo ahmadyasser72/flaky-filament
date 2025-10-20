@@ -1,4 +1,5 @@
 ---
+import prettyBytes from "pretty-bytes";
 import { handleActionResult } from "~/crud/action-handler";
 import DataTable from "~/crud/components/DataTable.astro";
 import { defineDataTable } from "~/crud/data-table";
@@ -14,14 +15,15 @@ const props = defineDataTable({
   columns: {
     judul: {},
     tanggal: { header: () => "Tanggal arsip", format: formatDate },
-    file: {
+    fileName: {
       header: () => "Link download",
-      format: (fileUrl) =>
-        `<a class="link inline-flex items-center gap-x-1" target="_blank" href="${fileUrl}">
-        ${fileUrl}
+      format: (fileName, { id, fileBuffer }) =>
+        `<a class="link inline-flex items-center gap-x-1" target="_blank" href="/sekretariat/arsip/download/${id}">
+        <span class="line-clamp-1">${fileName} (${prettyBytes(fileBuffer.byteLength)})</span>
         <iconify-icon icon="lucide:external-link" width="16"></iconify-icon>
       </a>`,
     },
+    fileBuffer: false,
   },
   getDetail: ({ judul, tanggal }) =>
     `${judul} (diarsipkan ${formatDate(tanggal)})`,

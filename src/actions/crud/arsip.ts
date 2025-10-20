@@ -1,7 +1,7 @@
-import { createId } from "@paralleldrive/cuid2";
 import { ActionError, defineAction } from "astro:actions";
-import { db, eq, Arsip } from "astro:db";
 import { z } from "astro:schema";
+import { eq } from "drizzle-orm";
+import { Arsip, db } from "~/server/db";
 
 const schema = z.object({
   id: z
@@ -42,14 +42,10 @@ export const arsip = {
     accept: "form",
     input: schema.omit({ id: true }),
     handler: async (data, context) => {
-      const id = createId();
+      const file = await data.file.arrayBuffer();
       const [arsip] = await db
         .insert(Arsip)
-        .values({
-          ...data,
-          id,
-          file: data.file.name, // TODO: upload file
-        })
+        .values({ ...data, fileName: data.file.name, fileBuffer: file })
         .returning();
 
       return arsip;

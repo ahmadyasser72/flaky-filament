@@ -55,7 +55,9 @@ const dataList = await Astro.callAction(action.list.orThrow, undefined);
                 return (
                   <td>
                     <Fragment
-                      set:html={columnDef.format?.(value as never) ?? value}
+                      set:html={
+                        columnDef.format?.(value as never, data) ?? value
+                      }
                     />
                   </td>
                 );

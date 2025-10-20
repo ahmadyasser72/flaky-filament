@@ -1,7 +1,7 @@
-import { createId } from "@paralleldrive/cuid2";
 import { ActionError, defineAction } from "astro:actions";
-import { and, db, eq, ne, Pegawai } from "astro:db";
 import { z } from "astro:schema";
+import { eq, and, ne } from "drizzle-orm";
+import { db, Pegawai } from "~/server/db";
 
 const schema = z.object({
   id: z
@@ -60,11 +60,7 @@ export const pegawai = {
     handler: async (data, context) => {
       await assertUniqueNip(data.nomorIndukPegawai);
 
-      const id = createId();
-      const [pegawai] = await db
-        .insert(Pegawai)
-        .values({ ...data, id })
-        .returning();
+      const [pegawai] = await db.insert(Pegawai).values(data).returning();
 
       return pegawai;
     },

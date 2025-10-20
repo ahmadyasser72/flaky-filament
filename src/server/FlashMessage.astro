@@ -8,7 +8,7 @@ const flash = getFlash(Astro);
   flash !== undefined && (
     <div
       id="flash-message"
-      class="toast toast-bottom sm:toast-top toast-center z-10"
+      class="toast toast-bottom sm:toast-top toast-center z-1000 max-w-full sm:max-w-xl"
     >
       <div
         class:list={[
@@ -17,7 +17,7 @@ const flash = getFlash(Astro);
           flash.type === "error" && "alert-error",
         ]}
       >
-        <span>{flash.message}</span>
+        <span class="line-clamp-2">{flash.message}</span>
       </div>
     </div>
   )

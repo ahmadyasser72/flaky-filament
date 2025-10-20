@@ -1,8 +1,8 @@
-import type { Arsip, Pegawai } from "astro:db";
+import type { Arsip, Pegawai } from "~/server/db";
 
 interface ColumnDef<T, K extends keyof T> {
   header?: (columnName: string) => string;
-  format?: (value: T[K]) => string;
+  format?: (value: T[K], others: T) => string;
   width?: number;
 }
 

@@ -9,7 +9,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/db": "^0.18.0",
     "@astrojs/vercel": "^8.2.9",
     "@paralleldrive/cuid2": "^2.2.2",
     "@tailwindcss/vite": "^4.1.14",
@@ -22,6 +21,9 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
+    "@libsql/client": "^0.15.15",
+    "drizzle-kit": "^0.31.5",
+    "drizzle-orm": "^0.44.6",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.14"
