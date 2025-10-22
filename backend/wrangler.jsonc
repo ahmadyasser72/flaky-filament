@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "backend",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-10-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "FRONTEND_URL": "https://frontend.terworking.workers.dev",
+    // *SECRETS*
+    // "SQLITE_DATABASE_URL": "",
+    // "SQLITE_AUTH_TOKEN": "",
+  },
+}

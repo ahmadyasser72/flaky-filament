@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "frontend",
+  "compatibility_date": "2025-10-22",
+  "assets": {
+    "directory": "./dist",
+  },
+  "vars": {
+    "BACKEND_URL": "https://backend.terworking.workers.dev",
+  },
+}
