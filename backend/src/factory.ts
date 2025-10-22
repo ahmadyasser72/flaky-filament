@@ -8,6 +8,7 @@ type Env = {
   Bindings: Cloudflare.Env;
   Variables: {
     db: ReturnType<typeof createDrizzle>;
+    createId: () => string;
   };
 };
 
@@ -28,6 +29,10 @@ export const factory = createFactory<Env>({
       const { SQLITE_DATABASE_URL, SQLITE_AUTH_TOKEN } = env(c);
       const db = createDrizzle(SQLITE_DATABASE_URL, SQLITE_AUTH_TOKEN);
       c.set("db", db);
+
+      const { createId } = await import("@paralleldrive/cuid2");
+      c.set("createId", createId);
+
       await next();
     });
   },

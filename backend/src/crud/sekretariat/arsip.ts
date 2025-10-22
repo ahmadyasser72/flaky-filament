@@ -43,7 +43,12 @@ const app = factory
     const file = await data.file.arrayBuffer();
     const [created] = await c.var.db
       .insert(Arsip)
-      .values({ ...data, file: data.file.name, fileBuffer: file })
+      .values({
+        id: c.var.createId(),
+        ...data,
+        file: data.file.name,
+        fileBuffer: file,
+      })
       .returning({ id: Arsip.id });
 
     return c.json({ data: created });

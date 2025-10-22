@@ -58,7 +58,10 @@ const app = factory
     const data = c.req.valid("form");
     const [created] = await c.var.db
       .insert(Pegawai)
-      .values(data)
+      .values({
+        id: c.var.createId(),
+        ...data,
+      })
       .returning({ id: Pegawai.id });
 
     return c.json({ data: created });
