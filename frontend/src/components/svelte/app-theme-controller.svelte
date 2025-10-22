@@ -14,6 +14,7 @@
 		id="theme-controller"
 		type="checkbox"
 		class="theme-controller"
+		checked={mode.current === "dark"}
 	/>
 
 	<iconify-icon icon="lucide:sun" width="12"></iconify-icon>
