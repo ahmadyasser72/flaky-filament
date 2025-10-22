@@ -39,7 +39,7 @@
   });
 
   let submitting = $state(false);
-  let errors = $state<Partial<Record<Columns, "string">>>({});
+  let errors = $state<Partial<Record<Columns, string[]>>>({});
   const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
 
@@ -83,10 +83,10 @@
   >
     <legend class="fieldset-legend">Data {name}</legend>
 
-    {#each Object.entries(fields) as [key, snippet] (key)}
+    {#each Object.entries(fields) as [key, snippet]}
       {@render snippet?.({
         initialValue: data[key],
-        error: errors[key as never],
+        error: errors[key]?.at(0),
       })}
     {/each}
   </fieldset>

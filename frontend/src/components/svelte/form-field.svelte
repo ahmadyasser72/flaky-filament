@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { JSX } from "astro/jsx-runtime";
   import { formatDate } from "~/utils/date";
+  import FormFieldWrapper from "./form-field-wrapper.svelte";
 
   interface Props {
     label: string;
@@ -18,16 +19,20 @@
   );
 </script>
 
-<div class="flex flex-col gap-1">
-  <label for={name} class="label">{label}</label>
-  <input
-    id={name}
-    {name}
-    {type}
-    class={["input", error !== undefined && "input-error"]}
-    {value}
-  />
-  <p class={["text-error text-xs", error === undefined && "opacity-0"]}>
-    {error ?? "-"}
-  </p>
-</div>
+<FormFieldWrapper {error}>
+  {#snippet children({ inputClass, errorSnippet, ...handler })}
+    <div class="flex flex-col gap-1">
+      <label for={name} class="label">{label}</label>
+      <input
+        id={name}
+        {name}
+        {type}
+        {value}
+        class={["input", inputClass]}
+        {...handler}
+      />
+
+      {@render errorSnippet()}
+    </div>
+  {/snippet}
+</FormFieldWrapper>
