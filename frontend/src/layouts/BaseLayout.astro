@@ -2,98 +2,99 @@
 import { ClientRouter, fade } from "astro:transitions";
 
 import "~/styles/global.css";
+
+import SidebarMenuItem from "~/components/SidebarMenuItem.astro";
 import AppThemeController from "~/components/svelte/app-theme-controller.svelte";
 import AppToast from "~/components/svelte/app-toast.svelte";
-import SidebarMenuItem from "~/components/SidebarMenuItem.astro";
 import { menus } from "~/menu";
 
 interface Props {
-  title: string;
+	title: string;
 }
 
 const { title } = Astro.props;
 ---
 
 <html lang="en" transition:animate="none">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
 
-    <ClientRouter fallback="swap" />
-  </head>
-  <body>
-    <AppToast client:only="svelte" />
+		<ClientRouter fallback="swap" />
+	</head>
+	<body>
+		<AppToast client:only="svelte" />
 
-    <div class="drawer lg:drawer-open bg-base-200" transition:animate="fade">
-      <input
-        id="sidebar"
-        type="checkbox"
-        class="drawer-toggle"
-        transition:persist="sidebar-drawer"
-      />
+		<div class="drawer lg:drawer-open bg-base-200" transition:animate="fade">
+			<input
+				id="sidebar"
+				type="checkbox"
+				class="drawer-toggle"
+				transition:persist="sidebar-drawer"
+			/>
 
-      <div
-        class="drawer-content rounded-box bg-base-100 m-2 flex min-h-[95vh] flex-col shadow-sm"
-      >
-        <div class="navbar rounded-t-box w-full shadow-sm">
-          <div class="flex-none">
-            <label for="sidebar" class="btn btn-ghost btn-circle">
-              <iconify-icon icon="lucide:menu" width="24"></iconify-icon>
-            </label>
-          </div>
+			<div
+				class="drawer-content rounded-box bg-base-100 m-2 flex min-h-[95vh] flex-col shadow-sm"
+			>
+				<div class="navbar rounded-t-box w-full shadow-sm">
+					<div class="flex-none">
+						<label for="sidebar" class="btn btn-ghost btn-circle">
+							<iconify-icon icon="lucide:menu" width="24"></iconify-icon>
+						</label>
+					</div>
 
-          <div class="mx-2 flex-1">
-            <a href="/" class="btn btn-ghost text-xl">
-              {title}
-            </a>
-          </div>
+					<div class="mx-2 flex-1">
+						<a href="/" class="btn btn-ghost text-xl">
+							{title}
+						</a>
+					</div>
 
-          <div class="mx-2 flex-none">
-            <AppThemeController client:load />
-          </div>
-        </div>
+					<div class="mx-2 flex-none">
+						<AppThemeController client:load />
+					</div>
+				</div>
 
-        <div class="p-4" transition:animate={fade({ duration: 500 })}>
-          <slot />
-        </div>
-      </div>
+				<div class="p-4" transition:animate={fade({ duration: 500 })}>
+					<slot />
+				</div>
+			</div>
 
-      <div class="drawer-side is-drawer-close:overflow-visible">
-        <label for="sidebar" aria-label="close sidebar" class="drawer-overlay"
-        ></label>
-        <div
-          class="is-drawer-close:w-14 is-drawer-open:w-64 bg-base-200 flex min-h-full flex-col items-start"
-        >
-          <div
-            class="is-drawer-close:hidden flex h-14 w-full items-center px-4"
-          >
-            <a
-              href="/dashboard"
-              class="link grow text-center text-2xl font-medium text-nowrap"
-              >Aplikasi ABCD</a
-            >
-          </div>
+			<div class="drawer-side is-drawer-close:overflow-visible">
+				<label for="sidebar" aria-label="close sidebar" class="drawer-overlay"
+				></label>
+				<div
+					class="is-drawer-close:w-14 is-drawer-open:w-64 bg-base-200 flex min-h-full flex-col items-start"
+				>
+					<div
+						class="is-drawer-close:hidden flex h-14 w-full items-center px-4"
+					>
+						<a
+							href="/dashboard"
+							class="link grow text-center text-2xl font-medium text-nowrap"
+							>Aplikasi ABCD</a
+						>
+					</div>
 
-          <ul class="menu w-full grow">
-            {menus.map((menu) => <SidebarMenuItem {...menu} />)}
-          </ul>
-        </div>
-      </div>
-    </div>
-  </body>
+					<ul class="menu w-full grow">
+						{menus.map((menu) => <SidebarMenuItem {...menu} />)}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
 
 <script>
-  import "iconify-icon"; // register <iconify-icon> web component
+	import "iconify-icon"; // register <iconify-icon> web component
 
-  document.addEventListener("astro:after-swap", () => {
-    const isDesktop = window.matchMedia("(min-width: 1024px)");
-    if (!isDesktop.matches)
-      // close drawer after navigation
-      (document.querySelector(".drawer-toggle") as HTMLInputElement).checked =
-        false;
-  });
+	document.addEventListener("astro:after-swap", () => {
+		const isDesktop = window.matchMedia("(min-width: 1024px)");
+		if (!isDesktop.matches)
+			// close drawer after navigation
+			(document.querySelector(".drawer-toggle") as HTMLInputElement).checked =
+				false;
+	});
 </script>

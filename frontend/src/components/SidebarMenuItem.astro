@@ -7,28 +7,28 @@ const { label, href, icon, submenus } = Astro.props;
 ---
 
 {
-  submenus !== undefined && submenus.length > 0 ? (
-    <>
-      <li class="menu-title is-drawer-close:hidden">{label}</li>
-      {submenus.map((menu) => (
-        <Astro.self {...menu} />
-      ))}
-    </>
-  ) : (
-    <li>
-      <a
-        class:list={[
-          "is-drawer-close:tooltip is-drawer-close:tooltip-right",
-          Astro.url.pathname === href && "menu-active",
-        ]}
-        href={href}
-        data-tip={label}
-      >
-        {icon !== undefined && <iconify-icon {icon} width="20" />}
-        <span class="is-drawer-close:hidden overflow-x-hidden text-nowrap">
-          {label}
-        </span>
-      </a>
-    </li>
-  )
+	submenus !== undefined && submenus.length > 0 ? (
+		<>
+			<li class="menu-title is-drawer-close:hidden">{label}</li>
+			{submenus.map((menu) => (
+				<Astro.self {...menu} />
+			))}
+		</>
+	) : (
+		<li>
+			<a
+				class:list={[
+					"is-drawer-close:tooltip is-drawer-close:tooltip-right",
+					Astro.url.pathname === href && "menu-active",
+				]}
+				href={href}
+				data-tip={label}
+			>
+				{icon !== undefined && <iconify-icon {icon} width="20" />}
+				<span class="is-drawer-close:hidden overflow-x-hidden text-nowrap">
+					{label}
+				</span>
+			</a>
+		</li>
+	)
 }

@@ -1,0 +1,8 @@
+{
+  "name": "shared-prettier-config",
+  "exports": "./index.js",
+  "type": "module",
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}

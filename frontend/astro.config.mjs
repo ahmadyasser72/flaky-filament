@@ -1,19 +1,20 @@
 // @ts-check
 import { defineConfig, envField } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
+
 import svelte from "@astrojs/svelte";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  env: {
-    schema: {
-      BACKEND_URL: envField.string({ access: "public", context: "client" }),
-    },
-  },
+	env: {
+		schema: {
+			BACKEND_URL: envField.string({ access: "public", context: "client" }),
+		},
+	},
 
-  integrations: [svelte()],
+	integrations: [svelte()],
 
-  vite: {
-    plugins: [tailwindcss()],
-  },
+	vite: {
+		plugins: [tailwindcss()],
+	},
 });

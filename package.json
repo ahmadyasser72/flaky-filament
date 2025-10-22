@@ -1,7 +1,8 @@
 {
-  "name": "flaky-filament-monorepo",
-  "workspaces": [
-    "backend",
-    "frontend"
-  ]
+	"name": "flaky-filament-monorepo",
+	"workspaces": [
+		"backend",
+		"frontend",
+		"packages/*"
+	]
 }

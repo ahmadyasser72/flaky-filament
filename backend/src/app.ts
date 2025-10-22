@@ -5,8 +5,8 @@ import { factory } from "~/factory";
 const app = factory.createApp();
 
 const routes = app
-  .route("/sekretariat/arsip", arsip)
-  .route("/sekretariat/pegawai", pegawai);
+	.route("/sekretariat/arsip", arsip)
+	.route("/sekretariat/pegawai", pegawai);
 
 export default app;
 export type AppType = typeof routes;
