@@ -1,15 +1,14 @@
 import { getActionContext } from "astro:actions";
-import { BACKEND_URL } from "astro:env/server";
 import { defineMiddleware, sequence } from "astro:middleware";
 
 import { createAuth } from "$lib/auth";
+import { createDrizzle } from "$lib/auth/db";
 import { createClient } from "backend";
 
-import { createDrizzle } from "./lib/auth/db";
-
 const initializeAuth = defineMiddleware(async ({ locals, request }, next) => {
-	const db = createDrizzle(locals.runtime.env.AUTH_DB);
-	locals.auth = createAuth(db);
+	const { AUTH_DB, BETTER_AUTH_SECRET } = locals.runtime.env;
+	const db = createDrizzle(AUTH_DB);
+	locals.auth = createAuth(db, BETTER_AUTH_SECRET);
 
 	const isAuthed = await locals.auth.api.getSession({
 		headers: request.headers,
@@ -45,10 +44,8 @@ const protectAllRoutes = defineMiddleware(
 );
 
 const initializeBackendRpc = defineMiddleware(({ locals }, next) => {
-	const bearerHeaders = {
-		authorization: `Bearer ${locals.runtime.env.BACKEND_API_KEY}`,
-	};
-
+	const { BACKEND_URL, BACKEND_API_KEY } = locals.runtime.env;
+	const bearerHeaders = { authorization: `Bearer ${BACKEND_API_KEY}` };
 	locals.rpc = {
 		...createClient(BACKEND_URL, { headers: bearerHeaders }),
 		fetch: (input, init) =>

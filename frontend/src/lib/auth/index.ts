@@ -5,8 +5,12 @@ import { admin as adminPlugin, username } from "better-auth/plugins";
 import type { createDrizzle } from "./db";
 import { ac, admin, user } from "./permissions";
 
-export const createAuth = (db?: ReturnType<typeof createDrizzle>) =>
+export const createAuth = (
+	db?: ReturnType<typeof createDrizzle>,
+	secret?: string,
+) =>
 	betterAuth({
+		secret,
 		database: drizzleAdapter(db ?? {}, { provider: "sqlite" }),
 		emailAndPassword: {
 			enabled: true,
