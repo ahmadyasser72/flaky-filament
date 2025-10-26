@@ -11,8 +11,8 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"lib": ["ESNext"],
-		"jsx": "react-jsx",
-		"jsxImportSource": "hono/jsx",
-		"types": ["@types/node", "./worker-configuration.d.ts"]
+		"types": ["@types/node", "./worker-configuration.d.ts"],
+		"noUnusedLocals": true,
+		"noUnusedParameters": true
 	}
 }

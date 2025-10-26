@@ -1,6 +1,5 @@
 import { untrack } from "svelte";
 import { persistedState } from "svelte-persisted-state";
-import { on } from "svelte/events";
 import { MediaQuery } from "svelte/reactivity";
 
 type Mode = "light" | "dark";
@@ -32,9 +31,5 @@ $effect.root(() => {
 
 	$effect(() => {
 		document.documentElement.dataset.theme = theme;
-	});
-
-	on(document, "astro:before-swap", (event) => {
-		event.newDocument.documentElement.dataset.theme = theme;
 	});
 });

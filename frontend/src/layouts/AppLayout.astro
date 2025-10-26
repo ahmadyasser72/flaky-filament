@@ -1,0 +1,63 @@
+---
+import NavBreadcrumbs from "~/components/NavBreadcrumbs.astro";
+import SidebarMenu from "~/components/SidebarMenu.astro";
+import SidebarUser from "~/components/SidebarUser.astro";
+import AppThemeController from "~/components/svelte/app-theme-controller.svelte";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+const { user } = Astro.locals;
+---
+
+<BaseLayout {title}>
+	<slot name="flash" slot="flash" />
+	<div class="drawer lg:drawer-open bg-base-200 min-h-screen">
+		<input
+			id="sidebar"
+			type="checkbox"
+			class="drawer-toggle"
+			up-keep
+			up-on-keep="window.matchMedia('(max-width: 1024px)').matches && event.preventDefault()"
+		/>
+
+		<div
+			class="drawer-content rounded-box bg-base-100 m-2 flex flex-col shadow-sm"
+		>
+			<div class="navbar rounded-t-box w-full shadow-sm">
+				<div class="flex-none">
+					<label for="sidebar" class="btn btn-ghost btn-circle">
+						<iconify-icon icon="lucide:menu" width="24"></iconify-icon>
+					</label>
+				</div>
+
+				<div class="mx-2 flex-1">
+					<NavBreadcrumbs />
+				</div>
+
+				<div class="mx-2 flex-none">
+					<AppThemeController client:only="svelte" />
+				</div>
+			</div>
+
+			<main class="contents *:flex-1 *:p-4" up-main>
+				<slot />
+			</main>
+		</div>
+
+		<div class="drawer-side is-drawer-close:overflow-visible">
+			<label for="sidebar" aria-label="close sidebar" class="drawer-overlay"
+			></label>
+			<div
+				class="is-drawer-close:w-14 is-drawer-open:w-64 bg-base-200 flex min-h-full flex-col items-start"
+			>
+				{user && <SidebarUser {user} />}
+
+				<SidebarMenu />
+			</div>
+		</div>
+	</div>
+</BaseLayout>

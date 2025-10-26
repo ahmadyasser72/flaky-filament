@@ -6,3 +6,7 @@
 
 	exclude: rootscrollgutter;
 }
+
+up-modal-box {
+	@apply !bg-base-100 !rounded-box;
+}

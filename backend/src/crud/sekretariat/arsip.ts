@@ -5,6 +5,18 @@ import { zValidator } from "~/crud/validator";
 import { Arsip } from "~/db";
 import { factory } from "~/factory";
 
+const fileSchema = z
+	.instanceof(File)
+	.refine((file) => file.name !== "", "File belum dipilih.")
+	.refine(
+		(file) => file.type === "application/pdf",
+		"File harus berupa dokumen PDF.",
+	)
+	.refine(
+		(file) => file.size <= 10 * 1024 * 1024,
+		"Ukuran file tidak boleh melebihi 10 MB.",
+	);
+
 const schema = z.object({
 	judul: z
 		.string({ message: "Judul belum diisi." })
@@ -21,38 +33,30 @@ const schema = z.object({
 			(date) => date <= new Date(),
 			"Tanggal tidak boleh lebih dari hari ini.",
 		),
-
-	file: z
-		.instanceof(File)
-		.refine((file) => file.name !== "", "File belum dipilih.")
-		.refine(
-			(file) => file.type === "application/pdf",
-			"File harus berupa dokumen PDF.",
-		)
-		.refine(
-			(file) => file.size <= 10 * 1024 * 1024,
-			"Ukuran file tidak boleh melebihi 10 MB.",
-		),
 });
 
 const app = factory
 	.createApp()
 	// CREATE
-	.post("/", zValidator("form", schema), async (c) => {
-		const data = c.req.valid("form");
-		const file = await data.file.arrayBuffer();
-		const [created] = await c.var.db
-			.insert(Arsip)
-			.values({
-				id: c.var.createId(),
-				...data,
-				file: data.file.name,
-				fileBuffer: file,
-			})
-			.returning({ id: Arsip.id });
+	.post(
+		"/",
+		zValidator("form", schema.extend({ file: fileSchema })),
+		async (c) => {
+			const data = c.req.valid("form");
+			const file = await data.file.arrayBuffer();
+			const [created] = await c.var.db
+				.insert(Arsip)
+				.values({
+					id: c.var.createId(),
+					...data,
+					file: data.file.name,
+					fileBuffer: file,
+				})
+				.returning({ id: Arsip.id });
 
-		return c.json({ data: created });
-	})
+			return c.json({ data: created });
+		},
+	)
 	// READ
 	.get("/:id", async (c) => {
 		const { id } = c.req.param();
@@ -66,19 +70,24 @@ const app = factory
 			: c.json({ data });
 	})
 	// UPDATE
-	.put("/:id", zValidator("form", schema.omit({ file: true })), async (c) => {
-		const { id } = c.req.param();
-		const data = c.req.valid("form");
-		const updated = await c.var.db
-			.update(Arsip)
-			.set(data)
-			.where(eq(Arsip.id, id))
-			.returning({ id: Arsip.id });
+	.put(
+		"/:id",
+		zValidator("form", schema.extend({ file: fileSchema.optional() })),
+		async (c) => {
+			const { id } = c.req.param();
+			const data = c.req.valid("form");
+			const file = await data.file?.arrayBuffer();
+			const updated = await c.var.db
+				.update(Arsip)
+				.set({ ...data, file: data.file?.name, fileBuffer: file })
+				.where(eq(Arsip.id, id))
+				.returning({ id: Arsip.id });
 
-		return updated.length === 0
-			? c.json({ data: null, error: "ARSIP NOT FOUND" }, 404)
-			: c.json({ data: updated[0] });
-	})
+			return updated.length === 0
+				? c.json({ data: null, error: "ARSIP NOT FOUND" }, 404)
+				: c.json({ data: updated[0] });
+		},
+	)
 	// DELETE
 	.delete("/:id", async (c) => {
 		const { id } = c.req.param();

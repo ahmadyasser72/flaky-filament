@@ -1,11 +1,28 @@
 {
 	"$schema": "../node_modules/wrangler/config-schema.json",
+	"main": "dist/_worker.js/index.js",
 	"name": "frontend",
-	"compatibility_date": "2025-10-22",
-	"assets": {
-		"directory": "./dist",
-	},
 	"vars": {
 		"BACKEND_URL": "https://backend.terworking.workers.dev",
+		// *SECRETS*
+		// "BACKEND_API_KEY": "",
+		// "BETTER_AUTH_SECRET": "",
+	},
+	"d1_databases": [
+		{
+			"binding": "AUTH_DB",
+			"database_name": "flaky-filament",
+			"database_id": "f3e676c2-c098-4fb4-ab5f-393beaa6f983",
+			"migrations_dir": "./drizzle/",
+		},
+	],
+	"compatibility_date": "2025-10-22",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./dist",
+	},
+	"observability": {
+		"enabled": true,
 	},
 }

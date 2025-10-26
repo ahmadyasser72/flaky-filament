@@ -5,8 +5,12 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"~/*": ["./src/*"]
-		}
+			"~/*": ["./src/*"],
+			"$lib/*": ["./src/lib/*"]
+		},
+		"types": ["@types/node", "./worker-configuration.d.ts"],
+		"noUnusedLocals": true,
+		"noUnusedParameters": true
 	},
 	"references": [{ "path": "../backend" }]
 }

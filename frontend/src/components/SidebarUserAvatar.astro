@@ -1,0 +1,23 @@
+---
+interface Props {
+	value: string;
+	placeholder: boolean;
+	class?: string;
+}
+
+const { value, placeholder, class: className } = Astro.props;
+---
+
+<div class:list={["avatar", placeholder && "avatar-placeholder"]}>
+	{
+		placeholder ? (
+			<div class:list={["bg-neutral text-neutral-content border", className]}>
+				<span class="text-xs select-none">{value}</span>
+			</div>
+		) : (
+			<div class:list={["border", className]}>
+				<img src={value} alt="User avatar" />
+			</div>
+		)
+	}
+</div>

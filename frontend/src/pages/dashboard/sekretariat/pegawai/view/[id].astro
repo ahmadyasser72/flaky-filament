@@ -1,0 +1,8 @@
+---
+import AppLayout from "~/layouts/AppLayout.astro";
+
+const id = Astro.params.id!;
+const title = `Pegawai #${id.slice(0, 10)}`;
+---
+
+<AppLayout {title}> Hello world! </AppLayout>

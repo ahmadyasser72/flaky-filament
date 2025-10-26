@@ -1,0 +1,109 @@
+---
+import { formatDate } from "$lib/date";
+
+import InputField, {
+	type Props as InputFieldProps,
+} from "~/components/InputField.astro";
+import AppLayout from "~/layouts/AppLayout.astro";
+
+const errors = {} as Partial<Record<string, string>>;
+
+const id = Astro.params.id!;
+
+if (Astro.request.method === "POST") {
+	const body = await Astro.request.formData();
+	const url = Astro.locals.rpc.sekretariat.arsip[":id"].$url({ param: { id } });
+
+	const response = (await Astro.locals.rpc.fetch(url, {
+		body,
+		method: "PUT",
+	})) as Awaited<
+		ReturnType<(typeof Astro.locals.rpc.sekretariat.arsip)[":id"]["$put"]>
+	>;
+
+	if (response.status === 422) {
+		const json = await response.json();
+		// @ts-expect-error trust me
+		Object.assign(errors, json.errors);
+		Astro.response.status = 422;
+	} else {
+		return Astro.redirect(Astro.url.pathname.replace("update", "view"));
+	}
+}
+
+const response = await Astro.locals.rpc.sekretariat.arsip[":id"].$get({
+	param: { id },
+});
+
+if (response.status === 404)
+	return Astro.redirect("/dashboard/sekretariat/arsip");
+
+const { data } = await response.json();
+const title = `Edit Arsip #${id.slice(0, 10)}`;
+
+const fields = [
+	{
+		label: "Judul",
+		name: "judul",
+		type: "text",
+		placeholder: "Masukkan judul",
+		autocomplete: "off",
+		required: true,
+	},
+	{
+		label: "Tanggal",
+		name: "tanggal",
+		type: "date",
+		placeholder: "Masukkan Tanggal",
+		max: formatDate(new Date().toISOString()),
+		autocomplete: "off",
+		required: true,
+	},
+	{
+		label: "File",
+		name: "file",
+		type: "file",
+		accept: "application/pdf",
+		placeholder: "File PDF",
+		required: true,
+	},
+] as const satisfies InputFieldProps[];
+---
+
+<AppLayout {title}>
+	<div class="mx-auto flex w-full max-w-md flex-col justify-center">
+		<div class="flex items-center justify-between">
+			<div class="text-xl font-semibold">{title}</div>
+		</div>
+
+		<div class="divider"></div>
+
+		<form
+			method="post"
+			up-submit
+			up-disable
+			enctype="multipart/form-data"
+			class="grid *:not-first:mt-4"
+		>
+			{
+				fields.map((props) => (
+					<InputField
+						{...props}
+						id={`arsip-${props.name}`}
+						error={errors[props.name]}
+						value={data[props.name]}
+					/>
+				))
+			}
+
+			<div class="flex justify-between">
+				<button type="submit" class="btn btn-primary"> Simpan </button>
+				<a
+					href={Astro.url.pathname.replace("update", "view")}
+					up-follow
+					class="btn btn-outline">Batal</a
+				>
+			</div>
+		</form>
+	</div>
+</AppLayout>

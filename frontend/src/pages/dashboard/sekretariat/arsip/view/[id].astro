@@ -1,0 +1,72 @@
+---
+import { formatDate } from "$lib/date";
+
+import AppLayout from "~/layouts/AppLayout.astro";
+
+const id = Astro.params.id!;
+
+if (Astro.request.method === "POST") {
+	const method = (
+		await Astro.request.text().then((text) => new URLSearchParams(text))
+	).get("_method");
+
+	if (method === "DELETE") {
+		await Astro.locals.rpc.sekretariat.arsip[":id"].$delete({
+			param: { id },
+		});
+
+		return Astro.redirect("/dashboard/sekretariat/arsip");
+	}
+}
+
+const response = await Astro.locals.rpc.sekretariat.arsip[":id"].$get({
+	param: { id },
+});
+
+if (response.status === 404)
+	return Astro.redirect("/dashboard/sekretariat/arsip");
+else if (Astro.url.searchParams.get("download") === "1")
+	return Astro.redirect(
+		Astro.locals.rpc.sekretariat.arsip[":id"].file.$url({ param: { id } }),
+	);
+
+const { data } = await response.json();
+const title = `Arsip #${id.slice(0, 10)}`;
+---
+
+<AppLayout {title}>
+	<div class="mx-auto flex w-full max-w-md flex-col justify-center">
+		<div class="flex items-center justify-between gap-y-4 max-sm:flex-col">
+			<div class="text-xl font-semibold">{title}</div>
+			<div class="flex gap-2">
+				<a
+					href={Astro.url.pathname.replace("view", "update")}
+					up-follow
+					class="btn btn-warning">Edit</a
+				>
+				<a
+					href={Astro.url.pathname}
+					up-follow
+					up-method="delete"
+					up-confirm="Konfirmasi hapus arsip?"
+					class="btn btn-error">Hapus</a
+				>
+			</div>
+		</div>
+
+		<div class="divider"></div>
+
+		<ul class="grid *:odd:font-medium *:odd:not-first:mt-4">
+			<li>Judul</li>
+			<li>{data.judul}</li>
+			<li>Tanggal arsip</li>
+			<li>{formatDate(data.tanggal)}</li>
+			<li>File</li>
+			<li>
+				<a target="_blank" href="?download=1" class="btn btn-primary"
+					>Download</a
+				>
+			</li>
+		</ul>
+	</div>
+</AppLayout>

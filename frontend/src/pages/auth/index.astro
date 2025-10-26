@@ -1,0 +1,185 @@
+---
+import { actions, isInputError } from "astro:actions";
+
+import ErrorAlert from "~/components/ErrorAlert.astro";
+import InputField from "~/components/InputField.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+const { session } = Astro.locals;
+if (session) return Astro.redirect("/dashboard");
+
+const errors = { login: {}, register: {} } as Record<
+	"login" | "register",
+	Partial<Record<"username" | "password" | "form", string>>
+>;
+
+try {
+	const formData = await Astro.request.formData();
+
+	const mode = formData.get("mode");
+	if (mode !== "login" && mode !== "register") throw new TypeError();
+
+	const { error } = await Astro.callAction(
+		mode === "login" ? actions.auth.login : actions.auth.register,
+		formData,
+	);
+
+	if (isInputError(error)) {
+		errors[mode].username = error.fields.username?.join(", ");
+		errors[mode].password = error.fields.password?.join(", ");
+		Astro.response.status = 422;
+	} else if (error?.message) {
+		errors[mode].form = error.message;
+		Astro.response.status = 400;
+	} else if (!error) {
+		return Astro.redirect("/dashboard");
+	}
+} catch (error) {
+	if (!(error instanceof TypeError)) throw error;
+}
+---
+
+<BaseLayout title="Auth">
+	{
+		errors.login.form && (
+			<ErrorAlert slot="flash">{errors.login.form}</ErrorAlert>
+		)
+	}
+	{
+		errors.register.form && (
+			<ErrorAlert slot="flash">{errors.register.form}</ErrorAlert>
+		)
+	}
+
+	<div class="mx-auto my-auto w-full max-w-md">
+		<div class="card bg-base-100 shadow-lg">
+			<div class="card-body p-6">
+				<h2 class="card-title mb-2 text-2xl">Welcome</h2>
+				<p class="mb-4 text-sm text-gray-500">
+					Pilih tab di bawah untuk Sign In atau Sign Up.
+				</p>
+
+				<div class="tabs tabs-border">
+					<input
+						id="auth-tab-login"
+						type="radio"
+						name="auth-tab"
+						class="tab flex-1"
+						aria-label="Sign In"
+						checked
+					/>
+					<div class="tab-content border-base-300 bg-base-100 p-10">
+						<form
+							up-submit
+							up-disable
+							method="post"
+							enctype="multipart/form-data"
+							class="space-y-4"
+						>
+							<input type="hidden" name="mode" value="login" />
+
+							<InputField
+								label="Username"
+								error={errors.login.username}
+								id="login-username"
+								name="username"
+								type="text"
+								placeholder="Masukkan username"
+								autocomplete="username"
+								required
+								up-keep
+							/>
+
+							<InputField
+								label="Password"
+								error={errors.login.password}
+								id="login-password"
+								name="password"
+								type="password"
+								placeholder="Masukkan password"
+								autocomplete="current-password"
+								required
+								up-keep
+							/>
+
+							<div class="flex items-center justify-between">
+								<button class="btn btn-primary">Masuk</button>
+								<div class="text-sm">
+									Lupa password?
+
+									<div class="dropdown dropdown-end">
+										<div
+											tabindex="0"
+											role="button"
+											class="btn btn-circle btn-ghost btn-xs text-info"
+										>
+											<iconify-icon icon="lucide:info" width="16"
+											></iconify-icon>
+										</div>
+										<div
+											tabindex="-1"
+											class="card card-sm dropdown-content bg-base-100 rounded-box z-1 w-64 shadow-sm"
+										>
+											<div tabindex="-1" class="card-body">
+												<h2 class="card-title">Lupa password?</h2>
+												<p>Hubungi operator jika ingin reset password anda.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+
+					<input
+						id="auth-tab-register"
+						type="radio"
+						name="auth-tab"
+						class="tab flex-1"
+						aria-label="Sign Up"
+						disabled={import.meta.env.PROD}
+					/>
+					<div class="tab-content border-base-300 bg-base-100 p-10">
+						<form
+							up-submit
+							up-disable
+							method="post"
+							enctype="multipart/form-data"
+							class="space-y-4"
+						>
+							<input type="hidden" name="mode" value="register" />
+
+							<InputField
+								label="Username"
+								error={errors.register.username}
+								id="register-username"
+								name="username"
+								type="text"
+								placeholder="Masukkan username"
+								autocomplete="username"
+								required
+								up-keep
+							/>
+
+							<InputField
+								label="Password"
+								error={errors.register.password}
+								id="register-password"
+								name="password"
+								type="password"
+								placeholder="Masukkan password"
+								autocomplete="current-password"
+								required
+								up-keep
+							/>
+
+							<div class="flex justify-end">
+								<button class="btn btn-secondary">Buat Akun</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</BaseLayout>

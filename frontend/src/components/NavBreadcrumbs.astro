@@ -1,0 +1,37 @@
+---
+const generateBreadcrumbs = () => {
+	const parts = Astro.url.pathname.split("/").filter(Boolean);
+	const breadcrumbs = [] as Record<"label" | "url", string>[];
+	let currentPath = "";
+
+	if (parts.length === 0) {
+		return [{ label: "Dashboard", url: "/" }];
+	}
+
+	for (const part of parts) {
+		currentPath += "/" + part;
+		if (currentPath.endsWith("view") || currentPath.endsWith("update"))
+			continue;
+
+		const label =
+			part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, " ");
+		breadcrumbs.push({ label, url: currentPath });
+	}
+
+	return breadcrumbs;
+};
+
+const breadcrumbs = generateBreadcrumbs();
+---
+
+<nav id="nav-breadcrumbs" class="breadcrumbs text-sm max-sm:max-w-52">
+	<ul>
+		{
+			breadcrumbs.map(({ label, url }) => (
+				<li>
+					<a href={url}>{label}</a>
+				</li>
+			))
+		}
+	</ul>
+</nav>

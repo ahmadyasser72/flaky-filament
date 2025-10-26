@@ -1,5 +1,5 @@
 ---
-import type { MenuItem } from "~/menu";
+import type { MenuItem } from "./SidebarMenu.astro";
 
 type Props = MenuItem;
 
@@ -23,6 +23,8 @@ const { label, href, icon, submenus } = Astro.props;
 				]}
 				href={href}
 				data-tip={label}
+				up-target=":main, #sidebar-menu, #nav-breadcrumbs"
+				up-transition="cross-fade"
 			>
 				{icon !== undefined && <iconify-icon {icon} width="20" />}
 				<span class="is-drawer-close:hidden overflow-x-hidden text-nowrap">

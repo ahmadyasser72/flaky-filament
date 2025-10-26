@@ -1,0 +1,28 @@
+---
+import SidebarMenuItem from "./SidebarMenuItem.astro";
+
+export interface MenuItem {
+	label: string;
+	href?: string;
+	icon?: string;
+	submenus?: MenuItem[];
+}
+
+const menus = [
+	{ label: "Dashboard", href: "/dashboard", icon: "lucide:area-chart" },
+	{
+		label: "Arsip",
+		href: "/dashboard/sekretariat/arsip",
+		icon: "lucide:book-marked",
+	},
+	{
+		label: "Pegawai",
+		href: "/dashboard/sekretariat/pegawai",
+		icon: "lucide:book-user",
+	},
+] satisfies MenuItem[];
+---
+
+<ul id="sidebar-menu" class="menu w-full grow">
+	{menus.map((menu) => <SidebarMenuItem {...menu} />)}
+</ul>

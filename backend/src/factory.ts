@@ -1,5 +1,5 @@
 import { env } from "hono/adapter";
-import { cors } from "hono/cors";
+import { bearerAuth } from "hono/bearer-auth";
 import { createFactory } from "hono/factory";
 
 import { createDrizzle } from "~/db";
@@ -16,13 +16,10 @@ export const factory = createFactory<Env>({
 	defaultAppOptions: { strict: true },
 	initApp: (app) => {
 		app.use(async (c, next) => {
-			const { FRONTEND_URL } = env(c);
-			const corsMiddleware = cors({
-				origin: FRONTEND_URL,
-				allowMethods: ["POST", "GET", "PUT", "DELETE"],
-			});
+			const { API_KEY } = env(c);
+			const bearer = bearerAuth({ token: API_KEY });
 
-			return corsMiddleware(c, next);
+			return bearer(c, next);
 		});
 
 		app.use(async (c, next) => {

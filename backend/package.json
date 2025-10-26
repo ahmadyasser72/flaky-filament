@@ -3,11 +3,12 @@
 	"type": "module",
 	"exports": "./src/client.ts",
 	"scripts": {
-		"dev": "NODE_ENV=development bun --watch src/app.ts",
+		"check": "tsc --noEmit",
+		"dev": "NODE_ENV=development bun --hot src/app.ts",
 		"deploy": "wrangler deploy --minify",
-		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
-		"db-push": "drizzle-kit push",
-		"db-push:dev": "NODE_ENV=development bun --bun drizzle-kit push",
+		"cf:typegen": "wrangler types --env-interface CloudflareBindings",
+		"db:push": "drizzle-kit push",
+		"db:push-dev": "NODE_ENV=development bun --bun drizzle-kit push",
 		"format": "prettier . --write"
 	},
 	"dependencies": {
@@ -24,6 +25,7 @@
 		"drizzle-kit": "^0.31.5",
 		"prettier": "^3.6.2",
 		"shared-prettier-config": "workspace:*",
+		"typescript": "^5.9.3",
 		"wrangler": "^4.44.0"
 	}
 }

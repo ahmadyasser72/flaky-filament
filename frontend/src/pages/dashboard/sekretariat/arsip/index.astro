@@ -1,0 +1,76 @@
+---
+import { formatDate } from "$lib/date";
+
+import AppLayout from "~/layouts/AppLayout.astro";
+
+const columns = ["Judul", "Tanggal Arsip", "File"];
+
+const { data } = await Astro.locals.rpc.sekretariat.arsip
+	.$get()
+	.then((response) => response.json());
+---
+
+<AppLayout title="Sekretariat - Arsip">
+	<div class="flex flex-col gap-4">
+		<div class="flex justify-between">
+			<a
+				href="/dashboard/sekretariat/arsip/new"
+				up-layer="new"
+				up-accept-location={Astro.url.pathname}
+				up-on-accepted="up.reload('tbody')"
+				class="btn btn-primary">Arsip Baru</a
+			>
+		</div>
+
+		<div class="rounded-box flex-1 overflow-auto shadow-sm">
+			<table class="table-sm table">
+				<thead>
+					<tr class="bg-base-300 sticky top-0 z-10">
+						<th class="sticky left-0 w-8 bg-inherit">No. </th>
+
+						{columns.map((column) => <th>{column}</th>)}
+
+						<th></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{
+						data.length === 0 ? (
+							<tr>
+								<td
+									colspan={columns.length + 2}
+									class="h-96 text-center text-xl font-medium sm:text-2xl"
+								>
+									Arsip Kosong
+								</td>
+							</tr>
+						) : (
+							data.map(({ id, judul, tanggal, file }, idx) => (
+								<tr class="odd:bg-base-100 even:bg-base-200 hover:bg-base-300">
+									<th class="sticky left-0 bg-inherit">{idx + 1}</th>
+
+									<td>{judul}</td>
+									<td>{formatDate(tanggal)}</td>
+									<td>{file}</td>
+
+									<td class="sticky right-0 bg-inherit max-lg:static">
+										<a
+											href={`/dashboard/sekretariat/arsip/view/${id}`}
+											up-layer="new"
+											up-accept-location={Astro.url.pathname}
+											up-on-accepted="up.reload('tbody')"
+											class="btn btn-xs btn-secondary"
+										>
+											Lihat
+										</a>
+									</td>
+								</tr>
+							))
+						)
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</AppLayout>

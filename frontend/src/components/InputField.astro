@@ -1,0 +1,24 @@
+---
+export interface Props extends astroHTML.JSX.InputHTMLAttributes {
+	label: string;
+	error?: string;
+}
+
+const { label, error, class: className, ...props } = Astro.props;
+---
+
+<label class="floating-label">
+	<span>{label}</span>
+	<input
+		up-keep
+		{...props}
+		class:list={[
+			props.type === "file" ? "file-input" : "input",
+			className,
+			error && "input-error",
+		]}
+	/>
+	<p class:list={["text-error text-sm", !error && "opacity-0"]}>
+		{error ?? "-"}
+	</p>
+</label>

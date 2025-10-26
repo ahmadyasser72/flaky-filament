@@ -17,7 +17,15 @@ const config = {
 		{ files: "*.astro", options: { parser: "astro" } },
 		{ files: "*.svelte", options: { parser: "svelte" } },
 	],
-	importOrder: ["^astro", "", "<THIRD_PARTY_MODULES>", "", "^~/(.*)$", "^[./]"],
+	importOrder: [
+		"^astro",
+		"",
+		"<THIRD_PARTY_MODULES>",
+		"",
+		"^$lib/(.*)$",
+		"^~/(.*)$",
+		"^[./]",
+	],
 };
 
 export default config;
