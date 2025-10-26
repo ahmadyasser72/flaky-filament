@@ -11,7 +11,7 @@ if (Astro.request.method === "POST") {
 	).get("_method");
 
 	if (method === "DELETE") {
-		await Astro.locals.rpc.sekretariat.arsip[":id"].$delete({
+		await Astro.locals.backend.rpc.sekretariat.arsip[":id"].$delete({
 			param: { id },
 		});
 
@@ -19,7 +19,7 @@ if (Astro.request.method === "POST") {
 	}
 }
 
-const response = await Astro.locals.rpc.sekretariat.arsip[":id"].$get({
+const response = await Astro.locals.backend.rpc.sekretariat.arsip[":id"].$get({
 	param: { id },
 });
 
@@ -27,7 +27,9 @@ if (response.status === 404)
 	return Astro.redirect("/dashboard/sekretariat/arsip");
 else if (Astro.url.searchParams.get("download") === "1")
 	return Astro.redirect(
-		Astro.locals.rpc.sekretariat.arsip[":id"].file.$url({ param: { id } }),
+		Astro.locals.backend.rpc.sekretariat.arsip[":id"].file.$url({
+			param: { id },
+		}),
 	);
 
 const { data } = await response.json();

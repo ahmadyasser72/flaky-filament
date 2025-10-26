@@ -3,11 +3,16 @@
 	"main": "dist/_worker.js/index.js",
 	"name": "frontend",
 	"vars": {
-		"BACKEND_URL": "https://backend.terworking.workers.dev",
 		// *SECRETS*
 		// "BACKEND_API_KEY": "",
 		// "BETTER_AUTH_SECRET": "",
 	},
+	"services": [
+		{
+			"binding": "BACKEND",
+			"service": "backend",
+		},
+	],
 	"d1_databases": [
 		{
 			"binding": "AUTH_DB",

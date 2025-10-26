@@ -1,4 +1,4 @@
-import { betterAuth, isProduction } from "better-auth";
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin as adminPlugin, username } from "better-auth/plugins";
 
@@ -14,7 +14,7 @@ export const createAuth = (
 		database: drizzleAdapter(db ?? {}, { provider: "sqlite" }),
 		emailAndPassword: {
 			enabled: true,
-			disableSignUp: isProduction,
+			// disableSignUp: isProduction,
 		},
 
 		plugins: [
@@ -22,7 +22,7 @@ export const createAuth = (
 				ac,
 				roles: { admin, user },
 				adminRoles: "admin",
-				defaultRole: isProduction ? "user" : "admin",
+				// defaultRole: isProduction ? "user" : "admin",
 			}),
 			username(),
 		],

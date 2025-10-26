@@ -4,11 +4,12 @@
 	"exports": "./src/client.ts",
 	"scripts": {
 		"check": "tsc --noEmit",
-		"dev": "NODE_ENV=development bun --hot src/app.ts",
+		"dev": "wrangler dev",
 		"deploy": "wrangler deploy --minify",
 		"cf:typegen": "wrangler types --env-interface CloudflareBindings",
-		"db:push": "drizzle-kit push",
-		"db:push-dev": "NODE_ENV=development bun --bun drizzle-kit push",
+		"db:gen": "drizzle-kit generate",
+		"db:push": "wrangler d1 migrations apply DB --remote",
+		"db:push-dev": "wrangler d1 migrations apply DB",
 		"format": "prettier . --write"
 	},
 	"dependencies": {

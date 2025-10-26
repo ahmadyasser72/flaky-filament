@@ -44,15 +44,22 @@ const protectAllRoutes = defineMiddleware(
 );
 
 const initializeBackendRpc = defineMiddleware(({ locals }, next) => {
-	const { BACKEND_URL, BACKEND_API_KEY } = locals.runtime.env;
-	const bearerHeaders = { authorization: `Bearer ${BACKEND_API_KEY}` };
-	locals.rpc = {
-		...createClient(BACKEND_URL, { headers: bearerHeaders }),
-		fetch: (input, init) =>
-			fetch(input, {
-				...init,
-				headers: { ...bearerHeaders, ...init?.headers },
-			}),
+	const { BACKEND, BACKEND_API_KEY } = locals.runtime.env;
+
+	const backendFetch: typeof BACKEND.fetch = (input, init) =>
+		BACKEND.fetch(input, {
+			...init,
+			headers: {
+				authorization: `Bearer ${BACKEND_API_KEY}`,
+				...init?.headers,
+			},
+		});
+
+	locals.backend = {
+		fetch: backendFetch,
+		rpc: createClient("http://localhost", {
+			fetch: backendFetch,
+		}),
 	};
 
 	return next();

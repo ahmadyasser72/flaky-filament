@@ -3,7 +3,10 @@ type Runtime = import("@astrojs/cloudflare").Runtime<CloudflareBindings>;
 declare namespace App {
 	interface Locals extends Runtime {
 		auth: typeof import("$lib/auth").auth;
-		rpc: import("backend").Client & { fetch: typeof globalThis.fetch };
+		backend: {
+			rpc: import("backend").Client;
+			fetch: typeof globalThis.fetch;
+		};
 
 		user: import("$lib/auth").Session["user"] | null;
 		session: import("$lib/auth").Session["session"] | null;

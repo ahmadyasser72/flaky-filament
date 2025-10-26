@@ -23,8 +23,7 @@ export const factory = createFactory<Env>({
 		});
 
 		app.use(async (c, next) => {
-			const { SQLITE_DATABASE_URL, SQLITE_AUTH_TOKEN } = env(c);
-			const db = createDrizzle(SQLITE_DATABASE_URL, SQLITE_AUTH_TOKEN);
+			const db = createDrizzle(c.env.DB);
 			c.set("db", db);
 
 			const { createId } = await import("@paralleldrive/cuid2");

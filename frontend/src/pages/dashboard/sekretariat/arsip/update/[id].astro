@@ -12,13 +12,17 @@ const id = Astro.params.id!;
 
 if (Astro.request.method === "POST") {
 	const body = await Astro.request.formData();
-	const url = Astro.locals.rpc.sekretariat.arsip[":id"].$url({ param: { id } });
+	const url = Astro.locals.backend.rpc.sekretariat.arsip[":id"].$url({
+		param: { id },
+	});
 
-	const response = (await Astro.locals.rpc.fetch(url, {
+	const response = (await Astro.locals.backend.fetch(url, {
 		body,
 		method: "PUT",
 	})) as Awaited<
-		ReturnType<(typeof Astro.locals.rpc.sekretariat.arsip)[":id"]["$put"]>
+		ReturnType<
+			(typeof Astro.locals.backend.rpc.sekretariat.arsip)[":id"]["$put"]
+		>
 	>;
 
 	if (response.status === 422) {
@@ -31,7 +35,7 @@ if (Astro.request.method === "POST") {
 	}
 }
 
-const response = await Astro.locals.rpc.sekretariat.arsip[":id"].$get({
+const response = await Astro.locals.backend.rpc.sekretariat.arsip[":id"].$get({
 	param: { id },
 });
 
