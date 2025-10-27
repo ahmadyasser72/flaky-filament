@@ -26,8 +26,8 @@ export const factory = createFactory<Env>({
 			const db = createDrizzle(c.env.DB);
 			c.set("db", db);
 
-			const { createId } = await import("@paralleldrive/cuid2");
-			c.set("createId", createId);
+			const { init } = await import("@paralleldrive/cuid2");
+			c.set("createId", init({ length: 8 }));
 
 			await next();
 		});
