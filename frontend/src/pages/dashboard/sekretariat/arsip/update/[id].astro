@@ -11,13 +11,12 @@ const errors = {} as Partial<Record<string, string>>;
 const id = Astro.params.id!;
 
 if (Astro.request.method === "POST") {
-	const body = await Astro.request.formData();
 	const url = Astro.locals.backend.rpc.sekretariat.arsip[":id"].$url({
 		param: { id },
 	});
 
 	const response = (await Astro.locals.backend.fetch(url, {
-		body,
+		body: Astro.request.body,
 		method: "PUT",
 	})) as Awaited<
 		ReturnType<
@@ -69,7 +68,6 @@ const fields = [
 		type: "file",
 		accept: "application/pdf",
 		placeholder: "File PDF",
-		required: true,
 	},
 ] as const satisfies InputFieldProps[];
 ---

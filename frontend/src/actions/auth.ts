@@ -2,8 +2,7 @@ import type { AstroCookies } from "astro";
 import { ActionError, defineAction } from "astro:actions";
 import { z } from "astro/zod";
 
-import { APIError } from "better-auth";
-import { parseSetCookieHeader } from "better-auth/cookies";
+import type { InferResponseType } from "hono/client";
 
 const usernameSchema = z
 	.string()
@@ -35,44 +34,30 @@ export const auth = {
 		accept: "form",
 		input: loginSchema,
 		handler: async (user, { locals, cookies }) => {
-			try {
-				const { headers } = await locals.auth.api.signInUsername({
-					body: user,
-					returnHeaders: true,
-				});
+			const response = await locals.backend.rpc.auth.login.$post({
+				json: user,
+			});
 
-				setResponseCookies(headers, cookies);
-			} catch (error) {
-				if (error instanceof APIError) {
-					throw new ActionError({
-						code: "BAD_REQUEST",
-						message: error.message,
-					});
-				}
-
-				throw error;
+			if (response.ok) {
+				const { data } = await response.json();
+				setResponseCookies(data, cookies);
+			} else {
+				const { message } = await response.json();
+				throw new ActionError({ code: "BAD_REQUEST", message });
 			}
 		},
 	}),
 	logout: defineAction({
 		accept: "form",
-		handler: async (_, { locals, cookies, request }) => {
-			try {
-				const { headers } = await locals.auth.api.signOut({
-					headers: request.headers,
-					returnHeaders: true,
-				});
+		handler: async (_, { locals, cookies }) => {
+			const response = await locals.backend.rpc.auth.logout.$post();
 
-				setResponseCookies(headers, cookies);
-			} catch (error) {
-				if (error instanceof APIError) {
-					throw new ActionError({
-						code: "BAD_REQUEST",
-						message: error.message,
-					});
-				}
-
-				throw error;
+			if (response.ok) {
+				const { data } = await response.json();
+				setResponseCookies(data, cookies);
+			} else {
+				const { message } = await response.json();
+				throw new ActionError({ code: "BAD_REQUEST", message });
 			}
 		},
 	}),
@@ -80,42 +65,31 @@ export const auth = {
 		accept: "form",
 		input: registerSchema,
 		handler: async (user, { locals, cookies }) => {
-			try {
-				const { headers } = await locals.auth.api.signUpEmail({
-					body: {
-						...user,
-						email: `${user.username}@example.com`,
-						name: user.username,
-					},
-					returnHeaders: true,
-				});
+			const response = await locals.backend.rpc.auth.register.$post({
+				json: user,
+			});
 
-				setResponseCookies(headers, cookies);
-			} catch (error) {
-				if (error instanceof APIError) {
-					throw new ActionError({
-						code: "BAD_REQUEST",
-						message: error.message,
-					});
-				}
-
-				throw error;
+			if (response.status === 200) {
+				const { data } = await response.json();
+				setResponseCookies(data, cookies);
+			} else {
+				const { message } = await response.json();
+				throw new ActionError({ code: "BAD_REQUEST", message });
 			}
 		},
 	}),
 };
 
-const setResponseCookies = (headers: Headers, cookies: AstroCookies) => {
-	const setCookies = headers.get("set-cookie")!;
-	const parsedCookies = parseSetCookieHeader(setCookies);
-	for (const [key, cookie] of parsedCookies) {
-		cookies.set(key, decodeURIComponent(cookie.value), {
-			sameSite: cookie.samesite,
-			secure: cookie.secure,
-			maxAge: cookie["max-age"],
-			httpOnly: cookie.httponly,
-			domain: cookie.domain,
-			path: cookie.path,
-		});
+const setResponseCookies = (
+	cookies: NonNullable<
+		InferResponseType<
+			App.Locals["backend"]["rpc"]["auth"]["login"]["$post"]
+		>["data"]
+	>,
+	cookieHelper: AstroCookies,
+) => {
+	for (const key in cookies) {
+		const { value, ...options } = cookies[key];
+		cookieHelper.set(key, value, options);
 	}
 };

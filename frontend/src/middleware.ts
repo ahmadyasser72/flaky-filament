@@ -1,26 +1,42 @@
 import { getActionContext } from "astro:actions";
 import { defineMiddleware, sequence } from "astro:middleware";
 
-import { createAuth } from "$lib/auth";
-import { createDrizzle } from "$lib/auth/db";
 import { createClient } from "backend";
 
-const initializeAuth = defineMiddleware(async ({ locals, request }, next) => {
-	const { AUTH_DB, BETTER_AUTH_SECRET } = locals.runtime.env;
-	const db = createDrizzle(AUTH_DB);
-	locals.auth = createAuth(db, BETTER_AUTH_SECRET);
+const initializeBackendRpc = defineMiddleware(({ locals, request }, next) => {
+	const { BACKEND, BACKEND_API_KEY } = locals.runtime.env;
 
-	const isAuthed = await locals.auth.api.getSession({
-		headers: request.headers,
-	});
+	const fetch: typeof BACKEND.fetch = (input, init) => {
+		init ??= {};
 
-	if (isAuthed) {
-		locals.user = isAuthed.user;
-		locals.session = isAuthed.session;
-	} else {
-		locals.user = null;
-		locals.session = null;
-	}
+		const hasContentType = new Headers(init.headers).has("content-type");
+		// @ts-expect-error keep winning
+		if (init.body && !hasContentType) init.duplex = "half";
+
+		init.headers = new Headers([
+			...request.headers
+				.entries()
+				.filter(([key]) => key === "cookie" || !hasContentType),
+			...new Headers(init.headers).entries(),
+			["authorization", `Bearer ${BACKEND_API_KEY}`],
+		]);
+
+		return BACKEND.fetch(input, init);
+	};
+
+	locals.backend = {
+		fetch,
+		rpc: createClient("http://localhost", { fetch: fetch }),
+	};
+
+	return next();
+});
+
+const initializeSession = defineMiddleware(async ({ locals }, next) => {
+	const response = await locals.backend.rpc.auth.session.$get();
+	const { data } = await response.json();
+	locals.user = data?.user;
+	locals.session = data?.user;
 
 	return next();
 });
@@ -43,31 +59,9 @@ const protectAllRoutes = defineMiddleware(
 		!locals.session && url.pathname !== "/auth" ? redirect("/auth") : next(),
 );
 
-const initializeBackendRpc = defineMiddleware(({ locals }, next) => {
-	const { BACKEND, BACKEND_API_KEY } = locals.runtime.env;
-
-	const backendFetch: typeof BACKEND.fetch = (input, init) =>
-		BACKEND.fetch(input, {
-			...init,
-			headers: {
-				authorization: `Bearer ${BACKEND_API_KEY}`,
-				...init?.headers,
-			},
-		});
-
-	locals.backend = {
-		fetch: backendFetch,
-		rpc: createClient("http://localhost", {
-			fetch: backendFetch,
-		}),
-	};
-
-	return next();
-});
-
 export const onRequest = sequence(
-	initializeAuth,
+	initializeBackendRpc,
+	initializeSession,
 	handleLogout,
 	protectAllRoutes,
-	initializeBackendRpc,
 );

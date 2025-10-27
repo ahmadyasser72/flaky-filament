@@ -7,12 +7,13 @@
 	"vars": {
 		// *SECRETS*
 		// "API_KEY": "",
+		// "BETTER_AUTH_SECRET": "",
 	},
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "flaky-filament",
-			"database_id": "f3e676c2-c098-4fb4-ab5f-393beaa6f983",
+			"database_id": "59096d5b-0aa1-4b64-988e-f0d78ce98c37",
 			"migrations_dir": "./drizzle/",
 		},
 	],

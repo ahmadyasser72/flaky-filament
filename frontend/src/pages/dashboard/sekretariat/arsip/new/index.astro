@@ -9,11 +9,10 @@ import AppLayout from "~/layouts/AppLayout.astro";
 const errors = {} as Partial<Record<string, string>>;
 
 if (Astro.request.method === "POST") {
-	const body = await Astro.request.formData();
 	const url = Astro.locals.backend.rpc.sekretariat.arsip.$url();
 
 	const response = (await Astro.locals.backend.fetch(url, {
-		body,
+		body: Astro.request.body,
 		method: "POST",
 	})) as Awaited<
 		ReturnType<typeof Astro.locals.backend.rpc.sekretariat.arsip.$post>

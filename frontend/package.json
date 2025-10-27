@@ -7,10 +7,7 @@
 		"dev": "astro dev",
 		"build": "astro check && astro build",
 		"deploy": "wrangler deploy",
-		"auth:gen": "bunx @better-auth/cli generate --yes --config src/lib/auth/index.ts --output src/lib/auth/schema.ts",
 		"cf:typegen": "wrangler types --env-interface CloudflareBindings",
-		"db:push": "wrangler d1 migrations apply AUTH_DB --remote",
-		"db:push-dev": "wrangler d1 migrations apply AUTH_DB",
 		"format": "prettier . --write"
 	},
 	"dependencies": {
@@ -19,14 +16,12 @@
 		"@tailwindcss/vite": "^4.1.14",
 		"astro": "^5.14.4",
 		"backend": "workspace:*",
-		"better-auth": "^1.3.29",
 		"daisyui": "^5.3.0",
 		"drizzle-orm": "^0.44.7",
 		"iconify-icon": "^3.0.1",
 		"pretty-bytes": "^7.1.0",
 		"svelte": "^5.41.1",
 		"svelte-persisted-state": "^1.2.0",
-		"svelte-sonner": "^1.0.5",
 		"tailwindcss": "^4.1.14",
 		"text-case": "^1.2.9",
 		"unpoly": "^3.12.0"
@@ -37,6 +32,7 @@
 		"@ianvs/prettier-plugin-sort-imports": "^4.7.0",
 		"@types/node": "^24.9.1",
 		"drizzle-kit": "^0.31.5",
+		"hono": "^4.10.3",
 		"prettier": "^3.6.2",
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-svelte": "^3.4.0",
@@ -44,6 +40,6 @@
 		"shared-prettier-config": "workspace:*",
 		"type-fest": "^5.1.0",
 		"typescript": "^5.9.3",
-		"wrangler": "^4.44.0"
+		"wrangler": "^4.45.0"
 	}
 }

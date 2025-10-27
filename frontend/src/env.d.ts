@@ -2,7 +2,6 @@ type Runtime = import("@astrojs/cloudflare").Runtime<CloudflareBindings>;
 
 declare namespace App {
 	interface Locals extends Runtime {
-		auth: typeof import("$lib/auth").auth;
 		backend: {
 			rpc: import("backend").Client;
 			fetch: typeof globalThis.fetch;

@@ -5,20 +5,11 @@
 	"vars": {
 		// *SECRETS*
 		// "BACKEND_API_KEY": "",
-		// "BETTER_AUTH_SECRET": "",
 	},
 	"services": [
 		{
 			"binding": "BACKEND",
 			"service": "backend",
-		},
-	],
-	"d1_databases": [
-		{
-			"binding": "AUTH_DB",
-			"database_name": "flaky-filament",
-			"database_id": "f3e676c2-c098-4fb4-ab5f-393beaa6f983",
-			"migrations_dir": "./drizzle/",
 		},
 	],
 	"compatibility_date": "2025-10-22",

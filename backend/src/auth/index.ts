@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin as adminPlugin, username } from "better-auth/plugins";
 
-import type { createDrizzle } from "./db";
+import type { createDrizzle } from "~/db";
 import { ac, admin, user } from "./permissions";
 
 export const createAuth = (
