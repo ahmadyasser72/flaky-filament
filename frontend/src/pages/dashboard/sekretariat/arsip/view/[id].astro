@@ -25,12 +25,6 @@ const response = await Astro.locals.backend.rpc.sekretariat.arsip[":id"].$get({
 
 if (response.status === 404)
 	return Astro.redirect("/dashboard/sekretariat/arsip");
-else if (Astro.url.searchParams.get("download") === "1")
-	return Astro.redirect(
-		Astro.locals.backend.rpc.sekretariat.arsip[":id"].file.$url({
-			param: { id },
-		}),
-	);
 
 const { data } = await response.json();
 const title = `Arsip #${id.slice(0, 10)}`;
@@ -65,8 +59,10 @@ const title = `Arsip #${id.slice(0, 10)}`;
 			<li>{formatDate(data.tanggal)}</li>
 			<li>File</li>
 			<li>
-				<a target="_blank" href="?download=1" class="btn btn-primary"
-					>Download</a
+				<a
+					target="_blank"
+					href={Astro.url.pathname.replace("view", "download-pdf")}
+					class="btn btn-primary">Download</a
 				>
 			</li>
 		</ul>
