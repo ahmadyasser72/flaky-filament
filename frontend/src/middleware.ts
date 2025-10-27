@@ -4,7 +4,7 @@ import { defineMiddleware, sequence } from "astro:middleware";
 import { createClient } from "backend";
 
 const initializeBackendRpc = defineMiddleware(({ locals, request }, next) => {
-	const { BACKEND, BACKEND_API_KEY } = locals.runtime.env;
+	const { BACKEND } = locals.runtime.env;
 
 	const fetch: typeof BACKEND.fetch = (input, init) => {
 		init ??= {};
@@ -18,7 +18,6 @@ const initializeBackendRpc = defineMiddleware(({ locals, request }, next) => {
 				.entries()
 				.filter(([key]) => key === "cookie" || !hasContentType),
 			...new Headers(init.headers).entries(),
-			["authorization", `Bearer ${BACKEND_API_KEY}`],
 		]);
 
 		return BACKEND.fetch(input, init);
