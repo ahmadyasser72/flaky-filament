@@ -18,6 +18,12 @@
 			"migrations_dir": "./drizzle/",
 		},
 	],
+	"kv_namespaces": [
+		{
+			"binding": "SESSION_KV",
+			"id": "ce4d09f4b2994ce78eef4a8c5c1cd6fd",
+		},
+	],
 	"observability": {
 		"enabled": true,
 	},

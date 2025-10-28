@@ -4,16 +4,30 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin as adminPlugin, username } from "better-auth/plugins";
 
-import type { createDrizzle } from "~/db";
+import { createDrizzle } from "~/db";
+import { Env } from "~/factory";
 import { ac, admin, user } from "./permissions";
 
-export const createAuth = (
-	db?: ReturnType<typeof createDrizzle>,
-	secret?: string,
-) =>
+export const createAuth = ({
+	DB,
+	SESSION_KV,
+	BETTER_AUTH_SECRET,
+}: Partial<
+	Pick<Env["Bindings"], "DB" | "SESSION_KV" | "BETTER_AUTH_SECRET">
+>) =>
 	betterAuth({
-		secret,
-		database: drizzleAdapter(db ?? {}, { provider: "sqlite" }),
+		secret: BETTER_AUTH_SECRET,
+		database: drizzleAdapter(DB ? createDrizzle(DB) : {}, {
+			provider: "sqlite",
+		}),
+		secondaryStorage: SESSION_KV
+			? {
+					get: (key) => SESSION_KV.get(key),
+					set: (key, value, ttl) =>
+						SESSION_KV.put(key, value, { expirationTtl: ttl }),
+					delete: (key) => SESSION_KV.delete(key),
+				}
+			: undefined,
 		emailAndPassword: {
 			enabled: true,
 			password: {
@@ -41,6 +55,6 @@ export const createAuth = (
 		],
 	});
 
-export const auth = createAuth();
+export const auth = createAuth({});
 
 export type Session = typeof auth.$Infer.Session;

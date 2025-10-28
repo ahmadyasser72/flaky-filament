@@ -3,7 +3,7 @@ import { createFactory } from "hono/factory";
 import { createAuth, Session } from "~/auth";
 import { createDrizzle } from "~/db";
 
-type Env = {
+export type Env = {
 	Bindings: CloudflareBindings;
 	Variables: {
 		db: ReturnType<typeof createDrizzle>;
@@ -22,7 +22,7 @@ export const factory = createFactory<Env>({
 		app.use(async (c, next) => {
 			const db = createDrizzle(c.env.DB);
 			c.set("db", db);
-			const auth = createAuth(db, c.env.BETTER_AUTH_SECRET);
+			const auth = createAuth(c.env);
 			c.set("auth", auth);
 
 			const { init } = await import("@paralleldrive/cuid2");
