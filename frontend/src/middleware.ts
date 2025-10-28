@@ -25,7 +25,7 @@ const initializeBackendRpc = defineMiddleware(({ locals, request }, next) => {
 
 	locals.backend = {
 		fetch,
-		rpc: createClient("http://localhost", { fetch: fetch }),
+		rpc: createClient("http://internal-backend", { fetch: fetch }),
 	};
 
 	return next();
