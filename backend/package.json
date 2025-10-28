@@ -7,9 +7,9 @@
 		"dev": "wrangler dev",
 		"deploy": "wrangler deploy --minify",
 		"cf:typegen": "wrangler types --env-interface CloudflareBindings",
-		"db:gen": "bunx @better-auth/cli generate --yes --config src/auth/index.ts --output src/auth/schema.ts && drizzle-kit generate",
-		"db:migrate": "wrangler d1 migrations apply DB --remote",
-		"db:migrate-dev": "wrangler d1 migrations apply DB",
+		"db:generate": "bunx @better-auth/cli generate --yes --config src/auth/index.ts --output src/auth/schema.ts && drizzle-kit generate",
+		"db:migrate:prod": "wrangler d1 migrations apply DB --remote",
+		"db:migrate:dev": "wrangler d1 migrations apply DB",
 		"format": "prettier . --write"
 	},
 	"dependencies": {
