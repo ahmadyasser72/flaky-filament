@@ -2,6 +2,8 @@
 import "~/styles/global.css";
 import "unpoly/unpoly.css";
 
+import AppToast from "~/components/svelte/app-toast.svelte";
+
 interface Props {
 	title: string;
 }
@@ -18,24 +20,15 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body class="flex min-h-screen min-w-screen flex-col antialiased">
-		<slot />
-
-		<div up-flashes class="toast toast-end md:toast-top md:toast-center">
-			<slot name="flash" />
+		<div id="app-toast" class="contents" up-keep>
+			<AppToast client:only="svelte" />
 		</div>
+
+		<slot />
 	</body>
 </html>
 
 <script>
 	import "iconify-icon"; // <iconify-icon> web component
 	import "unpoly"; // unpoly
-</script>
-
-<script is:inline>
-	document.addEventListener("DOMContentLoaded", () => {
-		// https://unpoly.com/flashes#clearing-after-delay
-		up.compiler("[up-flashes] > *", function (message) {
-			setTimeout(() => up.destroy(message, { animation: "fade-out" }), 5000);
-		});
-	});
 </script>

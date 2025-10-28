@@ -1,8 +1,8 @@
 ---
 import { actions, isInputError } from "astro:actions";
 
-import ErrorAlert from "~/components/ErrorAlert.astro";
 import InputField from "~/components/InputField.astro";
+import { flash } from "~/components/svelte/app-toast.svelte";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 
 const { session } = Astro.locals;
@@ -10,14 +10,16 @@ if (session) return Astro.redirect("/dashboard");
 
 const errors = { login: {}, register: {} } as Record<
 	"login" | "register",
-	Partial<Record<"username" | "password" | "form", string>>
+	Partial<Record<"username" | "password", string>>
 >;
 
+let submission: "login" | "register" | undefined = undefined;
 try {
 	const formData = await Astro.request.formData();
 
 	const mode = formData.get("mode");
 	if (mode !== "login" && mode !== "register") throw new TypeError();
+	submission = mode;
 
 	const { error } = await Astro.callAction(
 		mode === "login" ? actions.auth.login : actions.auth.register,
@@ -29,7 +31,11 @@ try {
 		errors[mode].password = error.fields.password?.join(", ");
 		Astro.response.status = 422;
 	} else if (error?.message) {
-		errors[mode].form = error.message;
+		flash(Astro, {
+			title: `Error saat ${mode}`,
+			description: error.message,
+			type: "error",
+		});
 		Astro.response.status = 400;
 	} else if (!error) {
 		return Astro.redirect("/dashboard");
@@ -40,17 +46,6 @@ try {
 ---
 
 <BaseLayout title="Auth">
-	{
-		errors.login.form && (
-			<ErrorAlert slot="flash">{errors.login.form}</ErrorAlert>
-		)
-	}
-	{
-		errors.register.form && (
-			<ErrorAlert slot="flash">{errors.register.form}</ErrorAlert>
-		)
-	}
-
 	<div class="mx-auto my-auto w-full max-w-md">
 		<div class="card bg-base-100 shadow-lg">
 			<div class="card-body p-6">
@@ -66,7 +61,7 @@ try {
 						name="auth-tab"
 						class="tab flex-1"
 						aria-label="Sign In"
-						checked
+						checked={submission !== "register"}
 					/>
 					<div class="tab-content border-base-300 bg-base-100 p-10">
 						<form
@@ -138,6 +133,7 @@ try {
 						class="tab flex-1"
 						aria-label="Sign Up"
 						disabled={import.meta.env.PROD}
+						checked={submission === "register"}
 					/>
 					<div class="tab-content border-base-300 bg-base-100 p-10">
 						<form
