@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { extractText, getDocumentProxy } from "unpdf";
 import { z } from "zod";
 
 import { zValidator } from "~/crud/validator";
@@ -43,14 +44,14 @@ const app = factory
 		zValidator("form", schema.extend({ file: fileSchema })),
 		async (c) => {
 			const data = c.req.valid("form");
-			const file = await data.file.arrayBuffer();
+			const file = await parsePdfFile(data.file);
+
 			const [created] = await c.var.db
 				.insert(Arsip)
 				.values({
 					id: c.var.createId(),
 					...data,
-					file: data.file.name,
-					fileBuffer: file,
+					...file!,
 				})
 				.returning({ id: Arsip.id });
 
@@ -76,10 +77,11 @@ const app = factory
 		async (c) => {
 			const { id } = c.req.param();
 			const data = c.req.valid("form");
-			const file = await data.file?.arrayBuffer();
+			const file = await parsePdfFile(data.file);
+
 			const updated = await c.var.db
 				.update(Arsip)
-				.set({ ...data, file: data.file?.name, fileBuffer: file })
+				.set({ ...data, ...file })
 				.where(eq(Arsip.id, id))
 				.returning({ id: Arsip.id });
 
@@ -112,7 +114,7 @@ const app = factory
 	.get("/:id/file", async (c) => {
 		const { id } = c.req.param();
 		const data = await c.var.db.query.Arsip.findFirst({
-			columns: { file: true, fileBuffer: true },
+			columns: { fileName: true, fileBuffer: true },
 			where: (arsip, { eq }) => eq(arsip.id, id),
 		});
 
@@ -123,9 +125,25 @@ const app = factory
 			headers: {
 				"content-type": "application/pdf",
 				"content-length": data.fileBuffer.byteLength.toString(),
-				"content-disposition": `attachment; filename="${data.file}"`,
+				"content-disposition": `attachment; filename="${data.fileName}"`,
 			},
 		});
 	});
+
+const parsePdfFile = async (file?: File) => {
+	if (!file) return;
+
+	const buffer = await file.arrayBuffer();
+	const pdf = await getDocumentProxy(copiedBuffer(buffer));
+	const { text } = await extractText(pdf, { mergePages: true });
+
+	return { fileName: file.name, fileBuffer: buffer, fileContent: text };
+};
+
+const copiedBuffer = (src: ArrayBuffer) => {
+	var dst = new ArrayBuffer(src.byteLength);
+	new Uint8Array(dst).set(new Uint8Array(src));
+	return dst;
+};
 
 export default app;

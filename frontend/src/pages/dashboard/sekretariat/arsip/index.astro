@@ -46,13 +46,13 @@ const { data } = await Astro.locals.backend.rpc.sekretariat.arsip
 								</td>
 							</tr>
 						) : (
-							data.map(({ id, judul, tanggal, file }, idx) => (
+							data.map(({ id, judul, tanggal, fileName }, idx) => (
 								<tr class="odd:bg-base-100 even:bg-base-200 hover:bg-base-300">
 									<th class="sticky left-0 bg-inherit">{idx + 1}</th>
 
 									<td>{judul}</td>
 									<td>{formatDate(tanggal)}</td>
-									<td>{file}</td>
+									<td>{fileName}</td>
 
 									<td class="sticky right-0 bg-inherit max-lg:static">
 										<a

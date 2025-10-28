@@ -63,15 +63,17 @@ const fields = [
 		placeholder: "Masukkan judul",
 		autocomplete: "off",
 		required: true,
+		value: data.judul,
 	},
 	{
 		label: "Tanggal",
 		name: "tanggal",
 		type: "date",
 		placeholder: "Masukkan Tanggal",
-		max: formatDate(new Date().toISOString()),
+		max: formatDate(new Date()),
 		autocomplete: "off",
 		required: true,
+		value: formatDate(data.tanggal),
 	},
 	{
 		label: "File",
@@ -104,7 +106,6 @@ const fields = [
 						{...props}
 						id={`arsip-${props.name}`}
 						error={formErrors?.[props.name]}
-						value={data[props.name]}
 					/>
 				))
 			}

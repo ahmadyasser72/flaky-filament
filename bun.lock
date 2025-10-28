@@ -12,6 +12,7 @@
         "better-auth": "^1.3.33",
         "drizzle-orm": "^0.44.7",
         "hono": "^4.10.3",
+        "unpdf": "^1.3.2",
         "zod": "^4.1.12",
       },
       "devDependencies": {
@@ -1304,6 +1305,8 @@
     "unist-util-visit-children": ["unist-util-visit-children@3.0.0", "", { "dependencies": { "@types/unist": "^3.0.0" } }, "sha512-RgmdTfSBOg04sdPcpTSD1jzoNBjt9a80/ZCzp5cI9n1qPzLZWF9YdvWGN2zmTumP1HWhXKdUWexjy/Wy/lJ7tA=="],
 
     "unist-util-visit-parents": ["unist-util-visit-parents@6.0.1", "", { "dependencies": { "@types/unist": "^3.0.0", "unist-util-is": "^6.0.0" } }, "sha512-L/PqWzfTP9lzzEa6CKs0k2nARxTdZduw3zyh8d2NVBnsyvHjSX4TWse388YrrQKbvI8w20fGjGlhgT96WwKykw=="],
+
+    "unpdf": ["unpdf@1.3.2", "", { "peerDependencies": { "@napi-rs/canvas": "^0.1.69" }, "optionalPeers": ["@napi-rs/canvas"] }, "sha512-TWh+7yNL4K9Rn3sjTTMjHhBNxXsrtvIw/nEdYWzLyJU9SZ33s2BhoCSNRG+aUhm/KkdMO6/WK8U6NqRw7fSF4A=="],
 
     "unpoly": ["unpoly@3.12.0", "", {}, "sha512-rAW07WkydmvviYAR1rqQY5uRhvOvuPt3SU0FL5Ld13vO3lHIlyEHKWjgCT5JqtY72OSu95qeBbN2AFv0RYgMKQ=="],
 
