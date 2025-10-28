@@ -19,7 +19,7 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="flex min-h-screen min-w-screen flex-col antialiased">
+	<body class="flex min-h-screen flex-col antialiased">
 		<div id="app-toast" class="contents" up-keep>
 			<AppToast client:only="svelte" />
 		</div>

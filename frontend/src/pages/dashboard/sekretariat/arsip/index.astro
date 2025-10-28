@@ -11,7 +11,7 @@ const { data } = await Astro.locals.backend.rpc.sekretariat.arsip
 ---
 
 <AppLayout title="Sekretariat - Arsip">
-	<div class="flex flex-col gap-4">
+	<div class="flex max-h-[calc(100vh-96px)] flex-col gap-4 overflow-auto">
 		<div class="flex justify-between">
 			<a
 				href="/dashboard/sekretariat/arsip/new"
@@ -22,7 +22,7 @@ const { data } = await Astro.locals.backend.rpc.sekretariat.arsip
 			>
 		</div>
 
-		<div class="rounded-box flex-1 overflow-auto shadow-sm">
+		<div class="rounded-box flex-1 shadow-sm">
 			<table class="table-sm table">
 				<thead>
 					<tr class="bg-base-300 sticky top-0 z-10">
