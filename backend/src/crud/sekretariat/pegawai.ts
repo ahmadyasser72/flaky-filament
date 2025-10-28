@@ -51,7 +51,7 @@ const schema = z.object({
 	}),
 });
 
-const app = factory
+export const app = factory
 	.createApp()
 	// CREATE
 	.post("/", zValidator("form", schema), async (c) => {
@@ -109,5 +109,3 @@ const app = factory
 
 		return c.json({ data: list }, 200);
 	});
-
-export default app;

@@ -36,7 +36,7 @@ const schema = z.object({
 		),
 });
 
-const app = factory
+export const app = factory
 	.createApp()
 	// CREATE
 	.post(
@@ -145,5 +145,3 @@ const copiedBuffer = (src: ArrayBuffer) => {
 	new Uint8Array(dst).set(new Uint8Array(src));
 	return dst;
 };
-
-export default app;

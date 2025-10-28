@@ -10,7 +10,7 @@ const schema = z.object({
 	password: z.string(),
 });
 
-const app = factory
+export const app = factory
 	.createApp()
 	.get("/session", (c) => {
 		const session = c.get("session");
@@ -93,5 +93,3 @@ const cookiesFromHeaders = (headers: Headers) => {
 		]),
 	);
 };
-
-export default app;
