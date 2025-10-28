@@ -32,9 +32,9 @@ try {
 		Astro.response.status = 422;
 	} else if (error?.message) {
 		flash(Astro, {
-			title: `Error saat ${mode}`,
-			description: error.message,
 			type: "error",
+			title: `Gagal ${mode}`,
+			description: error.message,
 		});
 		Astro.response.status = 400;
 	} else if (!error) {

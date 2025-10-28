@@ -54,7 +54,7 @@ const app = factory
 				})
 				.returning({ id: Arsip.id });
 
-			return c.json({ data: created });
+			return c.json({ data: created }, 200);
 		},
 	)
 	// READ
@@ -67,7 +67,7 @@ const app = factory
 
 		return data === undefined
 			? c.json({ data: null, error: "ARSIP NOT FOUND" }, 404)
-			: c.json({ data });
+			: c.json({ data }, 200);
 	})
 	// UPDATE
 	.put(
@@ -85,7 +85,7 @@ const app = factory
 
 			return updated.length === 0
 				? c.json({ data: null, error: "ARSIP NOT FOUND" }, 404)
-				: c.json({ data: updated[0] });
+				: c.json({ data: updated[0] }, 200);
 		},
 	)
 	// DELETE
@@ -98,7 +98,7 @@ const app = factory
 
 		return deleted.length === 0
 			? c.json({ data: null, error: "ARSIP NOT FOUND" }, 404)
-			: c.json({ data: deleted[0] });
+			: c.json({ data: deleted[0] }, 200);
 	})
 	// LIST
 	.get("/", async (c) => {
@@ -106,7 +106,7 @@ const app = factory
 			columns: { fileBuffer: false },
 		});
 
-		return c.json({ data: list });
+		return c.json({ data: list }, 200);
 	})
 	// DOWNLOAD FILE
 	.get("/:id/file", async (c) => {

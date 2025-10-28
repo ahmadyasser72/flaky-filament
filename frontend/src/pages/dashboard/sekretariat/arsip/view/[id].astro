@@ -1,6 +1,7 @@
 ---
 import { formatDate } from "$lib/date";
 
+import { flash, flashRedirect } from "~/components/svelte/app-toast.svelte";
 import AppLayout from "~/layouts/AppLayout.astro";
 
 const id = Astro.params.id!;
@@ -11,11 +12,28 @@ if (Astro.request.method === "POST") {
 	).get("_method");
 
 	if (method === "DELETE") {
-		await Astro.locals.backend.rpc.sekretariat.arsip[":id"].$delete({
+		const response = await Astro.locals.backend.rpc.sekretariat.arsip[
+			":id"
+		].$delete({
 			param: { id },
 		});
 
-		return Astro.redirect("/dashboard/sekretariat/arsip");
+		if (response.status === 200) {
+			const { data } = await response.json();
+			return flashRedirect({
+				location: "/dashboard/sekretariat/arsip",
+				type: "success",
+				title: "Arsip",
+				description: `Arsip berhasil dihapus! (id: ${data.id})`,
+			});
+		} else {
+			const { error } = await response.json();
+			flash(Astro, {
+				type: "error",
+				title: "Gagal menghapus arsip",
+				description: error,
+			});
+		}
 	}
 }
 

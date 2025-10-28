@@ -17,7 +17,7 @@ const { data } = await Astro.locals.backend.rpc.sekretariat.arsip
 				href="/dashboard/sekretariat/arsip/new"
 				up-layer="new"
 				up-accept-location={Astro.url.pathname}
-				up-on-accepted="up.reload('tbody')"
+				up-on-accepted="up.render('tbody', { response: event.response })"
 				class="btn btn-primary">Arsip Baru</a
 			>
 		</div>
@@ -59,7 +59,8 @@ const { data } = await Astro.locals.backend.rpc.sekretariat.arsip
 											href={`/dashboard/sekretariat/arsip/view/${id}`}
 											up-layer="new"
 											up-accept-location={Astro.url.pathname}
-											up-on-accepted="up.reload('tbody')"
+											up-on-accepted="up.render('tbody', { response: event.response })"
+											up-on-dismissed="up.reload('tbody')"
 											class="btn btn-xs btn-secondary"
 										>
 											Lihat

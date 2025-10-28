@@ -58,9 +58,25 @@ const protectAllRoutes = defineMiddleware(
 		!locals.session && url.pathname !== "/auth" ? redirect("/auth") : next(),
 );
 
+// https://github.com/unpoly/unpoly/discussions/514#discussioncomment-6446551
+const handleUnPolyQueryEvents = defineMiddleware(async ({ url }, next) => {
+	const response = await next();
+
+	const strippedUrl = new URL(url);
+	const upEvents = strippedUrl.searchParams.get("_up_events");
+	if (upEvents) {
+		strippedUrl.searchParams.delete("_up_events");
+		response.headers.set("x-up-events", upEvents);
+		response.headers.set("x-up-location", strippedUrl.href);
+	}
+
+	return response;
+});
+
 export const onRequest = sequence(
 	initializeBackendRpc,
 	initializeSession,
 	handleLogout,
 	protectAllRoutes,
+	handleUnPolyQueryEvents,
 );

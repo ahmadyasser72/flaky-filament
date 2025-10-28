@@ -4,10 +4,11 @@ import { formatDate } from "$lib/date";
 import InputField, {
 	type Props as InputFieldProps,
 } from "~/components/InputField.astro";
+import { flash, flashRedirect } from "~/components/svelte/app-toast.svelte";
 import AppLayout from "~/layouts/AppLayout.astro";
+import { getFormErrors, type FormErrors } from "~/lib/form";
 
-const errors = {} as Partial<Record<string, string>>;
-
+let formErrors: FormErrors = null;
 if (Astro.request.method === "POST") {
 	const url = Astro.locals.backend.rpc.sekretariat.arsip.$url();
 
@@ -18,13 +19,25 @@ if (Astro.request.method === "POST") {
 		ReturnType<typeof Astro.locals.backend.rpc.sekretariat.arsip.$post>
 	>;
 
-	if (response.status === 422) {
-		const json = await response.json();
-		// @ts-expect-error trust me
-		Object.assign(errors, json.errors);
+	formErrors = await getFormErrors(response);
+	if (formErrors) {
 		Astro.response.status = 422;
+	} else if (response.ok) {
+		const { data } = await response.json();
+		return flashRedirect({
+			location: "/dashboard/sekretariat/arsip",
+			type: "success",
+			title: "Arsip",
+			description: `Pembuatan arsip berhasil! (id: ${data.id})`,
+		});
 	} else {
-		return Astro.redirect("/dashboard/sekretariat/arsip");
+		// @ts-expect-error handle generic error regardless
+		const { error } = await response.json();
+		flash(Astro, {
+			type: "error",
+			title: "Gagal membuat arsip",
+			description: error,
+		});
 	}
 }
 
@@ -77,7 +90,7 @@ const fields = [
 					<InputField
 						{...props}
 						id={`arsip-${props.name}`}
-						error={errors[props.name]}
+						error={formErrors?.[props.name]}
 					/>
 				))
 			}

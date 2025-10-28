@@ -4,12 +4,12 @@ import { formatDate } from "$lib/date";
 import InputField, {
 	type Props as InputFieldProps,
 } from "~/components/InputField.astro";
+import { flash, flashRedirect } from "~/components/svelte/app-toast.svelte";
 import AppLayout from "~/layouts/AppLayout.astro";
-
-const errors = {} as Partial<Record<string, string>>;
+import { getFormErrors, type FormErrors } from "~/lib/form";
 
 const id = Astro.params.id!;
-
+let formErrors: FormErrors = null;
 if (Astro.request.method === "POST") {
 	const url = Astro.locals.backend.rpc.sekretariat.arsip[":id"].$url({
 		param: { id },
@@ -24,13 +24,24 @@ if (Astro.request.method === "POST") {
 		>
 	>;
 
-	if (response.status === 422) {
-		const json = await response.json();
-		// @ts-expect-error trust me
-		Object.assign(errors, json.errors);
+	formErrors = await getFormErrors(response);
+	if (formErrors) {
 		Astro.response.status = 422;
+	} else if (response.status === 200) {
+		const { data } = await response.json();
+		return flashRedirect({
+			location: Astro.url.pathname.replace("update", "view"),
+			type: "success",
+			title: "Arsip",
+			description: `Berhasil edit arsip! (id: ${data.id})`,
+		});
 	} else {
-		return Astro.redirect(Astro.url.pathname.replace("update", "view"));
+		const { error } = await response.json();
+		flash(Astro, {
+			type: "error",
+			title: "Gagal edit arsip.",
+			description: error,
+		});
 	}
 }
 
@@ -92,7 +103,7 @@ const fields = [
 					<InputField
 						{...props}
 						id={`arsip-${props.name}`}
-						error={errors[props.name]}
+						error={formErrors?.[props.name]}
 						value={data[props.name]}
 					/>
 				))
